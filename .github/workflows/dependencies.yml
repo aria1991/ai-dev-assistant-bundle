@@ -1,0 +1,48 @@
+﻿name: Dependency Updates
+
+on:
+  schedule:
+    - cron: '0 4 * * 1'  # Weekly on Monday at 4 AM UTC
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          
+      - name: Update dependencies
+        run: |
+          composer update --prefer-stable --no-progress
+          
+      - name: Run tests
+        run: |
+          vendor/bin/phpunit
+          vendor/bin/phpstan analyse
+          vendor/bin/php-cs-fixer fix --dry-run
+          
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update dependencies'
+          title: 'chore: automated dependency updates'
+          body: |
+            Automated dependency updates
+            
+            - Updated all dependencies to latest compatible versions
+            - All tests passing
+            - Code quality checks passed
+          branch: automated/dependency-updates
+          delete-branch: true
