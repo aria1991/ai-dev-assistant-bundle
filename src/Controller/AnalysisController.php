@@ -33,7 +33,7 @@ final class AnalysisController extends AbstractController
     public function __construct(
         private readonly CodeAnalyzer $codeAnalyzer,
         private readonly RateLimiter $rateLimiter,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -65,7 +65,7 @@ final class AnalysisController extends AbstractController
             $enabledAnalyzers = $data['analyzers'] ?? null;
 
             // Validate code size
-            if (strlen($code) > 1048576) { // 1MB limit
+            if (\strlen($code) > 1048576) { // 1MB limit
                 return new JsonResponse([
                     'error' => 'Code too large. Maximum size is 1MB.',
                 ], Response::HTTP_BAD_REQUEST);
@@ -82,7 +82,6 @@ final class AnalysisController extends AbstractController
             ]);
 
             return new JsonResponse($results);
-
         } catch (\Exception $e) {
             $this->logger->error('Analysis endpoint error', [
                 'error' => $e->getMessage(),
@@ -123,9 +122,9 @@ final class AnalysisController extends AbstractController
 
             // Security check - only allow certain file extensions
             $allowedExtensions = ['php', 'twig', 'yaml', 'yml', 'json'];
-            $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-            
-            if (!in_array($extension, $allowedExtensions, true)) {
+            $extension = strtolower(pathinfo($filePath, \PATHINFO_EXTENSION));
+
+            if (!\in_array($extension, $allowedExtensions, true)) {
                 return new JsonResponse([
                     'error' => 'File type not supported. Allowed: ' . implode(', ', $allowedExtensions),
                 ], Response::HTTP_BAD_REQUEST);
@@ -142,7 +141,6 @@ final class AnalysisController extends AbstractController
             ]);
 
             return new JsonResponse($results);
-
         } catch (\Exception $e) {
             $this->logger->error('File analysis endpoint error', [
                 'error' => $e->getMessage(),
@@ -163,7 +161,7 @@ final class AnalysisController extends AbstractController
     {
         try {
             $analyzers = $this->codeAnalyzer->getAnalyzerNames();
-            
+
             return new JsonResponse([
                 'analyzers' => $analyzers,
             ]);
@@ -187,4 +185,3 @@ final class AnalysisController extends AbstractController
         ]);
     }
 }
-

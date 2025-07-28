@@ -21,7 +21,7 @@ class AIDevAssistantBundleTest extends TestCase
     public function testBundleInstantiation(): void
     {
         $bundle = new AIDevAssistantBundle();
-        
+
         $this->assertInstanceOf(AIDevAssistantBundle::class, $bundle);
     }
 
@@ -29,7 +29,7 @@ class AIDevAssistantBundleTest extends TestCase
     {
         $bundle = new AIDevAssistantBundle();
         $extension = $bundle->getContainerExtension();
-        
+
         $this->assertNotNull($extension);
         $this->assertSame('ai_dev_assistant', $extension->getAlias());
     }

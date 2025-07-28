@@ -30,7 +30,7 @@ final class OpenAIProvider implements AIProviderInterface
         private readonly LoggerInterface $logger,
         private readonly string $apiKey,
         private readonly string $model = 'gpt-4',
-        private readonly int $maxTokens = 4000
+        private readonly int $maxTokens = 4000,
     ) {
     }
 
@@ -69,7 +69,7 @@ final class OpenAIProvider implements AIProviderInterface
         } catch (\Exception $e) {
             $this->logger->error('OpenAI API request failed', [
                 'error' => $e->getMessage(),
-                'prompt_length' => strlen($prompt),
+                'prompt_length' => \strlen($prompt),
             ]);
             throw $e;
         }
@@ -77,7 +77,7 @@ final class OpenAIProvider implements AIProviderInterface
 
     public function isAvailable(): bool
     {
-        return !empty($this->apiKey) 
+        return !empty($this->apiKey)
             && $this->apiKey !== 'your_openai_api_key_here'
             && str_starts_with($this->apiKey, 'sk-');
     }

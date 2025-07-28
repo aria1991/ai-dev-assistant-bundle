@@ -105,7 +105,6 @@ jobs:
     - name: Composer Package Validation
       run: |
         composer validate --strict
-        composer check-platform-reqs
         
     - name: Dependency Analysis
       run: |

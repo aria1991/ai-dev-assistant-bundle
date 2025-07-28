@@ -23,16 +23,17 @@ use Aria1991\AIDevAssistantBundle\Service\AIManager;
 final class DocumentationAnalyzer implements AnalyzerInterface
 {
     public function __construct(
-        private readonly AIManager $aiManager
+        private readonly AIManager $aiManager,
     ) {
     }
 
     public function analyze(string $code, string $filename = ''): array
     {
-        $prompt = sprintf($this->getPromptTemplate(), $filename, $code);
-        
+        $prompt = \sprintf($this->getPromptTemplate(), $filename, $code);
+
         try {
             $response = $this->aiManager->request($prompt);
+
             return $this->parseResponse($response);
         } catch (\Exception $e) {
             return [
