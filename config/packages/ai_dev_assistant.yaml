@@ -1,0 +1,45 @@
+# Example configuration for AI Development Assistant Bundle
+# Add this to your config/packages/ai_dev_assistant.yaml
+
+ai_dev_assistant:
+    # Enable or disable the bundle
+    enabled: true
+    
+    # AI provider configuration
+    ai:
+        providers:
+            openai:
+                api_key: '%env(OPENAI_API_KEY)%'
+                model: 'gpt-4'
+                max_tokens: 4000
+            anthropic:
+                api_key: '%env(ANTHROPIC_API_KEY)%'
+                model: 'claude-3-sonnet-20240229'
+                max_tokens: 4000
+            google:
+                api_key: '%env(GOOGLE_AI_API_KEY)%'
+                model: 'gemini-pro'
+    
+    # Analysis configuration
+    analysis:
+        enabled_analyzers:
+            - 'security'
+            - 'performance'
+            - 'quality'
+            - 'documentation'
+        max_file_size: 1048576  # 1MB
+        excluded_paths:
+            - 'vendor/'
+            - 'var/cache/'
+            - 'node_modules/'
+            - 'public/build/'
+    
+    # Cache configuration
+    cache:
+        enabled: true
+        ttl: 3600  # 1 hour
+    
+    # Rate limiting
+    rate_limiting:
+        requests_per_minute: 60
+        requests_per_hour: 1000

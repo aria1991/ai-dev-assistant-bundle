@@ -1,0 +1,91 @@
+{
+    "name": "aria1991/ai-dev-assistant-bundle",
+    "type": "symfony-bundle",
+    "description": "AI-powered code analysis and development assistant for Symfony applications",
+    "keywords": [
+        "symfony",
+        "ai",
+        "code-analysis",
+        "static-analysis",
+        "openai",
+        "anthropic",
+        "gemini",
+        "code-quality",
+        "security",
+        "architecture"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aria Vahidi",
+            "email": "Aria.vahidi2020@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "symfony/config": "^6.4 || ^7.0",
+        "symfony/console": "^6.4 || ^7.0",
+        "symfony/dependency-injection": "^6.4 || ^7.0",
+        "symfony/framework-bundle": "^6.4 || ^7.0",
+        "symfony/http-kernel": "^6.4 || ^7.0",
+        "symfony/http-client": "^6.4 || ^7.0",
+        "symfony/finder": "^6.4 || ^7.0",
+        "symfony/string": "^6.4 || ^7.0",
+        "symfony/yaml": "^6.4 || ^7.0",
+        "symfony/cache": "^6.4 || ^7.0",
+        "psr/log": "^1.1 || ^2.0 || ^3.0",
+        "psr/cache": "^1.0 || ^2.0 || ^3.0",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0 || ^11.0",
+        "symfony/phpunit-bridge": "^6.4 || ^7.0",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-symfony": "^1.3",
+        "friendsofphp/php-cs-fixer": "^3.0"
+    },
+    "suggest": {
+        "monolog/monolog": "For advanced logging capabilities",
+        "symfony/cache": "For caching AI analysis results",
+        "symfony/rate-limiter": "For API rate limiting"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aria1991\\AIDevAssistantBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aria1991\\AIDevAssistantBundle\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.0-dev"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-html coverage",
+        "cs-fix": "php-cs-fixer fix",
+        "cs-check": "php-cs-fixer fix --dry-run --diff",
+        "stan": "phpstan analyse",
+        "quality": [
+            "@cs-check",
+            "@stan",
+            "@test"
+        ],
+        "post-install-cmd": [
+            "@php bin/console ai-dev-assistant:install --no-interaction || true"
+        ]
+    }
+}
