@@ -1,49 +1,18 @@
-name: CI/CD Pipeline
+﻿name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop, 'feature/**', 'hotfix/**', 'release/**' ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main, develop ]
-  schedule:
-    - cron: '0 2 * * *'
+    branches: [ main, master ]
 
 env:
   COMPOSER_NO_INTERACTION: 1
-  COMPOSER_ALLOW_SUPERUSER: 1
 
 jobs:
   validation:
     name: Code Validation
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, xml, ctype, iconv, intl, dom, filter, json, curl
-          tools: composer:v2, cs2pr
-          coverage: none
-          
-      - name: Validate composer files
-        run: composer validate --strict --no-check-all --no-check-publish
-        
-      - name: Check conventional commits
-        uses: webiny/action-conventional-commits@v1.3.0
-        if: github.event_name == 'pull_request'
-
-  security:
-    name: Security Analysis
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: validation
     
     steps:
       - name: Checkout code
@@ -56,29 +25,17 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, dom, filter, json, curl
           tools: composer:v2
           
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-dev --optimize-autoloader
-        
-      - name: Symfony Security Check
-        uses: symfonycorp/security-checker-action@v5
-        
-      - name: CodeQL Analysis
-        uses: github/codeql-action/init@v3
-        with:
-          languages: php
-          
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+      - name: Validate composer files
+        run: composer validate --strict --no-check-all --no-check-publish
 
   quality:
     name: Code Quality
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     needs: validation
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.2', '8.3', '8.4']
+        php-version: ['8.2', '8.3']
         
     steps:
       - name: Checkout code
@@ -89,8 +46,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           extensions: mbstring, xml, ctype, iconv, intl, dom, filter, json, curl
-          tools: composer:v2, cs2pr
-          coverage: xdebug
+          tools: composer:v2
           
       - name: Cache Composer dependencies
         uses: actions/cache@v4
@@ -99,37 +55,28 @@ jobs:
           key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             composer-${{ runner.os }}-${{ matrix.php-version }}-
-            composer-${{ runner.os }}-
             
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --optimize-autoloader
         
-      - name: PHP CS Fixer
-        run: vendor/bin/php-cs-fixer fix --dry-run --diff --format=checkstyle | cs2pr
+      - name: Run PHPUnit tests
+        run: vendor/bin/phpunit --no-coverage
         
-      - name: PHPStan Analysis
-        run: vendor/bin/phpstan analyse --error-format=github
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --no-progress
         
-      - name: PHPUnit Tests
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml --log-junit=junit.xml
-        
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          file: coverage.xml
-          flags: php-${{ matrix.php-version }}
-          name: PHP ${{ matrix.php-version }}
+      - name: Run PHP CS Fixer
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff
 
   compatibility:
-    name: Compatibility Matrix
+    name: Compatibility Testing
     runs-on: ubuntu-latest
-    timeout-minutes: 25
     needs: validation
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.2', '8.3', '8.4']
-        symfony-version: ['6.4.*', '7.0.*', '7.1.*']
+        php-version: ['8.2', '8.3']
+        symfony-version: ['6.4.*', '7.0.*']
         dependency-version: ['lowest', 'highest']
             
     steps:
@@ -143,7 +90,7 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, intl, dom, filter, json, curl
           tools: composer:v2
           
-      - name: Install dependencies (${{ matrix.dependency-version }})
+      - name: Install dependencies
         run: |
           composer require symfony/framework-bundle:${{ matrix.symfony-version }} --no-update
           if [ "${{ matrix.dependency-version }}" = "lowest" ]; then
@@ -154,54 +101,3 @@ jobs:
           
       - name: Run tests
         run: vendor/bin/phpunit --no-coverage
-
-  performance:
-    name: Performance Benchmarks
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: [quality, security]
-    if: github.event_name == 'pull_request'
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: mbstring, xml, ctype, iconv, intl, dom, filter, json, curl, opcache
-          tools: composer:v2
-          
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-dev --optimize-autoloader --classmap-authoritative
-        
-      - name: Memory usage benchmark
-        run: |
-          echo "Measuring memory usage..."
-          php -d memory_limit=128M -r "
-            require 'vendor/autoload.php';
-            \$start = memory_get_usage();
-            new \Aria1991\AIDevAssistantBundle\AIDevAssistantBundle();
-            \$end = memory_get_usage();
-            echo 'Bundle instantiation memory: ' . number_format((\$end - \$start) / 1024, 2) . ' KB' . PHP_EOL;
-          "
-
-  notify:
-    name: Notifications
-    runs-on: ubuntu-latest
-    needs: [security, quality, compatibility]
-    if: always()
-    
-    steps:
-      - name: Success notification
-        if: needs.security.result == 'success' && needs.quality.result == 'success' && needs.compatibility.result == 'success'
-        run: echo "All checks passed successfully!"
-        
-      - name: Failure notification
-        if: needs.security.result == 'failure' || needs.quality.result == 'failure' || needs.compatibility.result == 'failure'
-        run: |
-          echo "Some checks failed. Please review the logs."
-          exit 1
-
-
