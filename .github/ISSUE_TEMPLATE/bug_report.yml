@@ -1,0 +1,86 @@
+﻿name: Bug Report
+description: Report a bug or issue with the AI Development Assistant Bundle
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: input
+    id: version
+    attributes:
+      label: Bundle Version
+      description: What version of the bundle are you using?
+      placeholder: e.g., 1.0.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: php-version
+    attributes:
+      label: PHP Version
+      description: What PHP version are you using?
+      options:
+        - PHP 8.2
+        - PHP 8.3
+        - Other (please specify in description)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: symfony-version
+    attributes:
+      label: Symfony Version
+      description: What Symfony version are you using?
+      options:
+        - Symfony 6.4
+        - Symfony 7.0
+        - Symfony 7.1
+        - Other (please specify in description)
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Tell us what happened
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Install bundle...
+        2. Configure...
+        3. Run command...
+        4. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: A clear description of what you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-logs
+    attributes:
+      label: Error Logs
+      description: Please copy and paste any relevant error logs
+      render: shell
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
