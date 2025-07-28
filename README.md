@@ -53,7 +53,7 @@ php bin/console ai-dev-assistant:analyze src/
 
 - **PHP**: 8.2+ (including PHP 8.4 ✅)
 - **Symfony**: 6.4+ or 7.0+
-- **Extensions**: `ext-curl`, `ext-json`
+- **Extensions**: `ext-json` (required), `ext-curl` (recommended)
 - **Internet**: Required for AI provider APIs
 
 > **PHP 8.4 Compatibility**: Fully tested and supported! All features work perfectly with the latest PHP version.
