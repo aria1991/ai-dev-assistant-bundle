@@ -6,7 +6,11 @@ Write-Host ""
 # Check current branch status
 Write-Host "Current Branch Status:" -ForegroundColor Cyan
 git log --oneline master -1
-git log --oneline origin/main -1
+try {
+    git log --oneline origin/main -1
+} catch {
+    Write-Host "INFO: Branch 'origin/main' not found." -ForegroundColor Yellow
+}
 Write-Host ""
 
 # Check if main and master are in sync
