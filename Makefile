@@ -79,7 +79,7 @@ install-deps:
 clean:
 	@echo "Cleaning up..."
 	@rm -f test-protection.md
-	@git branch -D feature/test-protection-* 2>/dev/null || true
+	@git for-each-ref --format="%(refname:short)" refs/heads/feature/test-protection-* | xargs -r -n 1 git branch -D 2>/dev/null || true
 	@echo "✅ Cleanup complete"
 
 # Show current branch status
