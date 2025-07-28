@@ -49,7 +49,16 @@ php bin/console ai-dev-assistant:analyze src/
 - **Flexible**: Analyze single files or entire directories
 - **Fast**: Cached results, optimized for large codebases
 
-## 📦 Installation
+## � Requirements
+
+- **PHP**: 8.2+ (including PHP 8.4 ✅)
+- **Symfony**: 6.4+ or 7.0+
+- **Extensions**: `ext-curl`, `ext-json`
+- **Internet**: Required for AI provider APIs
+
+> **PHP 8.4 Compatibility**: Fully tested and supported! All features work perfectly with the latest PHP version.
+
+## �📦 Installation
 
 Install the bundle via Composer:
 
@@ -276,7 +285,9 @@ vendor/bin/phpunit --coverage-html coverage
 # Static analysis
 vendor/bin/phpstan analyse
 
-# Code style
+# Code style (automatic download & fix)
+.\fix-cs.ps1  # Windows PowerShell
+# OR use composer if available
 vendor/bin/php-cs-fixer fix --dry-run
 ```
 
