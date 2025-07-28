@@ -18,13 +18,21 @@ try {
 Write-Host ""
 
 # Check if main and master are in sync
-$masterCommit = git rev-parse master
-$mainCommit = git rev-parse origin/main
+if (git show-ref --verify --quiet refs/heads/master) {
+    $masterCommit = git rev-parse master
+    $mainCommit = git rev-parse origin/main
 
-if ($masterCommit -eq $mainCommit) {
-    Write-Host "SUCCESS: main and master branches are now in sync" -ForegroundColor Green
+    if ($masterCommit -eq $mainCommit) {
+        Write-Host "SUCCESS: main and master branches are now in sync" -ForegroundColor Green
+    } else {
+        Write-Host "ERROR: main and master branches are still out of sync" -ForegroundColor Red
+        Write-Host "Master commit: $masterCommit" -ForegroundColor Gray
+        Write-Host "Main commit: $mainCommit" -ForegroundColor Gray
+    }
 } else {
-    Write-Host "ERROR: main and master branches are still out of sync" -ForegroundColor Red
+    Write-Host "WARNING: The 'master' branch does not exist locally." -ForegroundColor Yellow
+    Write-Host "Skipping comparison with the 'main' branch." -ForegroundColor Yellow
+}
     Write-Host "Master commit: $masterCommit" -ForegroundColor Gray
     Write-Host "Main commit: $mainCommit" -ForegroundColor Gray
 }
