@@ -45,7 +45,7 @@ final class CodeAnalyzer
     public function analyzeCode(string $code, string $filename = '', ?array $enabledAnalyzers = null): array
     {
         $cacheKey = $this->generateCacheKey($code, $filename, $enabledAnalyzers);
-        
+
         // Try to get from cache first
         if ($cached = $this->cacheService->get($cacheKey)) {
             $this->logger->debug('Using cached analysis result', ['filename' => $filename]);
@@ -85,7 +85,6 @@ final class CodeAnalyzer
                 if (isset($analyzerResult['issues'])) {
                     $this->updateSummary($results['summary'], $analyzerResult['issues']);
                 }
-
             } catch (\Exception $e) {
                 $this->logger->error('Analyzer failed', [
                     'analyzer' => $analyzer->getName(),
@@ -102,7 +101,7 @@ final class CodeAnalyzer
 
         // Calculate overall risk score
         $results['risk_score'] = $this->calculateRiskScore($results['summary']);
-        
+
         // Cache the results
         $this->cacheService->set($cacheKey, $results);
 

@@ -63,11 +63,11 @@ final class AnalyzeCodeCommand extends Command
         $enabledAnalyzers = null;
         if ($analyzersOption = $input->getOption('analyzers')) {
             $enabledAnalyzers = array_map('trim', explode(',', $analyzersOption));
-            
+
             // Validate analyzer names
             $availableAnalyzers = $this->codeAnalyzer->getAnalyzerNames();
             $invalidAnalyzers = array_diff($enabledAnalyzers, $availableAnalyzers);
-            
+
             if (!empty($invalidAnalyzers)) {
                 $io->error('Invalid analyzers: ' . implode(', ', $invalidAnalyzers));
                 $io->note('Available analyzers: ' . implode(', ', $availableAnalyzers));
@@ -79,7 +79,7 @@ final class AnalyzeCodeCommand extends Command
         try {
             // Get files to analyze
             $files = $this->getFilesToAnalyze($path, $excludePaths, $maxFiles);
-            
+
             if (empty($files)) {
                 $io->warning('No PHP files found to analyze.');
 
@@ -94,14 +94,13 @@ final class AnalyzeCodeCommand extends Command
 
             foreach ($files as $file) {
                 $io->text("Analyzing: {$file}");
-                
+
                 try {
                     $result = $this->codeAnalyzer->analyzeFile($file, $enabledAnalyzers);
                     $results[] = $result;
-                    
+
                     $totalIssues += $result['summary']['total_issues'] ?? 0;
                     $criticalIssues += $result['summary']['critical_issues'] ?? 0;
-                    
                 } catch (\Exception $e) {
                     $io->error("Failed to analyze {$file}: " . $e->getMessage());
                 }
@@ -125,7 +124,6 @@ final class AnalyzeCodeCommand extends Command
             ));
 
             return $criticalIssues > 0 ? Command::FAILURE : Command::SUCCESS;
-
         } catch (\Exception $e) {
             $io->error('Analysis failed: ' . $e->getMessage());
 
@@ -161,7 +159,7 @@ final class AnalyzeCodeCommand extends Command
         $files = [];
         foreach ($finder as $file) {
             $files[] = $file->getRealPath();
-            
+
             if (\count($files) >= $maxFiles) {
                 break;
             }
@@ -202,7 +200,7 @@ final class AnalyzeCodeCommand extends Command
                         $severity = strtoupper($issue['severity'] ?? 'UNKNOWN');
                         $line = $issue['line'] ?? '?';
                         $message = $issue['message'] ?? 'No message';
-                        
+
                         $io->text("  [{$severity}] Line {$line}: {$message}");
                     }
                 }
@@ -212,4 +210,3 @@ final class AnalyzeCodeCommand extends Command
         }
     }
 }
-

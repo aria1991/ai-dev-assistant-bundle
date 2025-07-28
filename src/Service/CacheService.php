@@ -80,13 +80,13 @@ final class CacheService
             $item = $this->cache->getItem($key);
             $item->set($value);
             $item->expiresAfter($ttl ?? $this->ttl);
-            
+
             $result = $this->cache->save($item);
-            
+
             if ($result) {
                 $this->logger->debug('Cache set', ['key' => $key, 'ttl' => $ttl ?? $this->ttl]);
             }
-            
+
             return $result;
         } catch (\Exception $e) {
             $this->logger->warning('Cache set failed', [
@@ -113,11 +113,11 @@ final class CacheService
 
         try {
             $result = $this->cache->deleteItem($key);
-            
+
             if ($result) {
                 $this->logger->debug('Cache delete', ['key' => $key]);
             }
-            
+
             return $result;
         } catch (\Exception $e) {
             $this->logger->warning('Cache delete failed', [
@@ -142,11 +142,11 @@ final class CacheService
 
         try {
             $result = $this->cache->clear();
-            
+
             if ($result) {
                 $this->logger->info('Cache cleared');
             }
-            
+
             return $result;
         } catch (\Exception $e) {
             $this->logger->warning('Cache clear failed', [

@@ -82,7 +82,6 @@ final class AnalysisController extends AbstractController
             ]);
 
             return new JsonResponse($results);
-
         } catch (\Exception $e) {
             $this->logger->error('Analysis endpoint error', [
                 'error' => $e->getMessage(),
@@ -142,7 +141,6 @@ final class AnalysisController extends AbstractController
             ]);
 
             return new JsonResponse($results);
-
         } catch (\Exception $e) {
             $this->logger->error('File analysis endpoint error', [
                 'error' => $e->getMessage(),
@@ -163,7 +161,7 @@ final class AnalysisController extends AbstractController
     {
         try {
             $analyzers = $this->codeAnalyzer->getAnalyzerNames();
-            
+
             return new JsonResponse([
                 'analyzers' => $analyzers,
             ]);
@@ -187,4 +185,3 @@ final class AnalysisController extends AbstractController
         ]);
     }
 }
-

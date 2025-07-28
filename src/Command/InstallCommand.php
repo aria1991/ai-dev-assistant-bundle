@@ -38,7 +38,7 @@ final class InstallCommand extends Command
 ai_dev_assistant:
     # Enable the bundle (set to false to disable completely)
     enabled: true
-    
+
     # AI Provider Configuration
     ai:
         providers:
@@ -53,7 +53,7 @@ ai_dev_assistant:
             google:
                 api_key: '%%env(GOOGLE_AI_API_KEY)%%'
                 model: 'gemini-pro'
-    
+
     # Analysis Configuration
     analysis:
         enabled_analyzers:
@@ -68,12 +68,12 @@ ai_dev_assistant:
             - 'var/log/'
             - 'node_modules/'
             - 'public/build/'
-    
+
     # Caching (recommended for production)
     cache:
         enabled: true
         ttl: 3600  # 1 hour cache duration
-    
+
     # Rate Limiting (prevents API abuse)
     rate_limiting:
         requests_per_minute: 60   # Per IP address
@@ -126,7 +126,7 @@ ENV;
             $io->warning("Configuration file already exists: {$configPath}");
             if ($io->confirm('Do you want to overwrite it?', false)) {
                 $filesystem->dumpFile($configPath, self::CONFIG_TEMPLATE);
-                $io->success("Configuration file updated!");
+                $io->success('Configuration file updated!');
             }
         }
 
@@ -134,20 +134,20 @@ ENV;
         $envPath = $this->projectDir . '/.env';
         if ($filesystem->exists($envPath)) {
             $envContent = file_get_contents($envPath);
-            
+
             if ($envContent !== false && !str_contains($envContent, 'ai-dev-assistant-bundle')) {
                 $filesystem->appendToFile($envPath, self::ENV_TEMPLATE);
-                $io->success("Added environment variables to .env file");
+                $io->success('Added environment variables to .env file');
             } else {
-                $io->info("Environment variables already exist in .env file");
+                $io->info('Environment variables already exist in .env file');
             }
         } else {
-            $io->warning(".env file not found. Please create it and add the API keys manually.");
+            $io->warning('.env file not found. Please create it and add the API keys manually.');
         }
 
         // Step 3: Installation summary
         $io->section('🎉 Installation Complete!');
-        
+
         $io->definitionList(
             ['Configuration file' => $configPath],
             ['Environment variables' => 'Added to .env file'],
@@ -181,4 +181,3 @@ ENV;
         return Command::SUCCESS;
     }
 }
-

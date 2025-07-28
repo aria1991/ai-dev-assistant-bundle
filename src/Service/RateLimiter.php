@@ -41,26 +41,26 @@ final class RateLimiter
     public function isAllowed(string $identifier, int $maxRequests, int $windowSeconds): bool
     {
         $key = $this->getCacheKey($identifier, $windowSeconds);
-        
+
         try {
             $item = $this->cache->getItem($key);
-            
+
             if (!$item->isHit()) {
                 // First request in window
                 $item->set(1);
                 $item->expiresAfter($windowSeconds);
                 $this->cache->save($item);
-                
+
                 $this->logger->debug('Rate limit: First request', [
                     'identifier' => $identifier,
                     'window' => $windowSeconds,
                 ]);
-                
+
                 return true;
             }
-            
+
             $currentCount = $item->get();
-            
+
             if ($currentCount >= $maxRequests) {
                 $this->logger->warning('Rate limit exceeded', [
                     'identifier' => $identifier,
@@ -68,22 +68,21 @@ final class RateLimiter
                     'max_requests' => $maxRequests,
                     'window' => $windowSeconds,
                 ]);
-                
+
                 return false;
             }
-            
+
             // Increment counter
             $item->set($currentCount + 1);
             $this->cache->save($item);
-            
+
             $this->logger->debug('Rate limit: Request allowed', [
                 'identifier' => $identifier,
                 'count' => $currentCount + 1,
                 'max_requests' => $maxRequests,
             ]);
-            
+
             return true;
-            
         } catch (\Exception $e) {
             $this->logger->error('Rate limiter error', [
                 'identifier' => $identifier,
@@ -106,7 +105,7 @@ final class RateLimiter
     public function getCurrentCount(string $identifier, int $windowSeconds): int
     {
         $key = $this->getCacheKey($identifier, $windowSeconds);
-        
+
         try {
             $item = $this->cache->getItem($key);
 
@@ -132,17 +131,17 @@ final class RateLimiter
     public function reset(string $identifier, int $windowSeconds): bool
     {
         $key = $this->getCacheKey($identifier, $windowSeconds);
-        
+
         try {
             $result = $this->cache->deleteItem($key);
-            
+
             if ($result) {
                 $this->logger->info('Rate limit reset', [
                     'identifier' => $identifier,
                     'window' => $windowSeconds,
                 ]);
             }
-            
+
             return $result;
         } catch (\Exception $e) {
             $this->logger->error('Rate limiter reset error', [

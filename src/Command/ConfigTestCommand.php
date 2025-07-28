@@ -45,7 +45,7 @@ final class ConfigTestCommand extends Command
 
         // Check available providers
         $availableProviders = $this->aiManager->getAvailableProviders();
-        
+
         if (empty($availableProviders)) {
             $io->error('No AI providers are configured or available!');
             $io->note([
@@ -84,7 +84,6 @@ final class ConfigTestCommand extends Command
 
                 return Command::SUCCESS; // Still consider it a success since we got a response
             }
-
         } catch (\Exception $e) {
             $io->error('AI connectivity test failed: ' . $e->getMessage());
 
