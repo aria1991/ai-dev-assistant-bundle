@@ -98,10 +98,10 @@ try {
     Write-Host "ERROR: Failed to enable auto-merge: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# Set default branch to master (if not already)
+# Set default branch to develop (main integration branch)
 try {
-    gh api repos/$repo --method PATCH --field default_branch=master
-    Write-Host "SUCCESS: Default branch set to master" -ForegroundColor Green
+    gh api repos/$repo --method PATCH --field default_branch=develop
+    Write-Host "SUCCESS: Default branch set to develop" -ForegroundColor Green
 } catch {
     Write-Host "ERROR: Failed to set default branch: $($_.Exception.Message)" -ForegroundColor Red
 }
@@ -110,17 +110,24 @@ Write-Host ""
 Write-Host "Branch Protection Setup Complete!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Summary of applied rules:" -ForegroundColor Yellow
-Write-Host "Master Branch:" -ForegroundColor White
+Write-Host "Master Branch (Production):" -ForegroundColor White
 Write-Host "  - Requires 1 PR approval" -ForegroundColor Gray
 Write-Host "  - Requires CI checks: quality-assurance, security-analysis, package-validation" -ForegroundColor Gray
-Write-Host "  - No direct pushes (admins only)" -ForegroundColor Gray
-Write-Host "  - No force pushes or deletions" -ForegroundColor Gray
+Write-Host "  - Only accepts PRs from develop branch" -ForegroundColor Gray
+Write-Host "  - No direct pushes or force pushes" -ForegroundColor Gray
 Write-Host ""
-Write-Host "Develop Branch:" -ForegroundColor White
+Write-Host "Develop Branch (Integration):" -ForegroundColor White
+Write-Host "  - Default branch for new repositories" -ForegroundColor Gray
 Write-Host "  - Requires CI checks: quality-assurance, security-analysis" -ForegroundColor Gray
-Write-Host "  - Direct pushes allowed for maintainers" -ForegroundColor Gray
-Write-Host "  - Auto-merge enabled" -ForegroundColor Gray
+Write-Host "  - Accepts feature branch PRs" -ForegroundColor Gray
+Write-Host "  - Auto-merge enabled for approved PRs" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "1. Verify the protection rules in GitHub web interface" -ForegroundColor White
-Write-Host "2. Test the workflow with a feature branch" -ForegroundColor White
+Write-Host "2. Create feature branches from develop" -ForegroundColor White
+Write-Host "3. Submit PRs from feature branches to develop" -ForegroundColor White
+Write-Host "4. Create release PRs from develop to master" -ForegroundColor White
+Write-Host ""
+Write-Host "Workflow Summary:" -ForegroundColor Cyan
+Write-Host "  feature/* -> develop (continuous integration)" -ForegroundColor Gray
+Write-Host "  develop -> master (production releases)" -ForegroundColor Gray
