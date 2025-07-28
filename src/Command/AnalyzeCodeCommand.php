@@ -107,7 +107,7 @@ final class AnalyzeCodeCommand extends Command
 
             // Output results
             if ($format === 'json') {
-                $output->write(json_encode($results, JSON_PRETTY_PRINT));
+                $json = json_encode($results, JSON_PRETTY_PRINT); $output->write($json ?: "{}");
             } else {
                 $this->outputTextResults($io, $results);
             }
@@ -208,3 +208,4 @@ final class AnalyzeCodeCommand extends Command
         }
     }
 }
+

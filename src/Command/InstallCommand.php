@@ -135,7 +135,7 @@ ENV;
         if ($filesystem->exists($envPath)) {
             $envContent = file_get_contents($envPath);
             
-            if (!str_contains($envContent, 'ai-dev-assistant-bundle')) {
+            if ($envContent !== false && !str_contains($envContent, 'ai-dev-assistant-bundle')) {
                 $filesystem->appendToFile($envPath, self::ENV_TEMPLATE);
                 $io->success("Added environment variables to .env file");
             } else {
@@ -181,3 +181,4 @@ ENV;
         return Command::SUCCESS;
     }
 }
+

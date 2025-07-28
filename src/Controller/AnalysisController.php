@@ -86,7 +86,7 @@ final class AnalysisController extends AbstractController
         } catch (\Exception $e) {
             $this->logger->error('Analysis endpoint error', [
                 'error' => $e->getMessage(),
-                'client_ip' => $clientIp ?? 'unknown',
+                'client_ip' => 'unknown',
             ]);
 
             return new JsonResponse([
@@ -146,7 +146,7 @@ final class AnalysisController extends AbstractController
         } catch (\Exception $e) {
             $this->logger->error('File analysis endpoint error', [
                 'error' => $e->getMessage(),
-                'client_ip' => $clientIp ?? 'unknown',
+                'client_ip' => 'unknown',
             ]);
 
             return new JsonResponse([
@@ -187,3 +187,4 @@ final class AnalysisController extends AbstractController
         ]);
     }
 }
+
