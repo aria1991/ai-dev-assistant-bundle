@@ -31,7 +31,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  *
  * Features:
  * - Security vulnerability detection
- * - Performance optimization suggestions  
+ * - Performance optimization suggestions
  * - Code quality analysis
  * - Documentation completeness review
  * - Multi-provider AI support (OpenAI, Anthropic, Google)

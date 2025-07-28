@@ -23,10 +23,12 @@ interface AIProviderInterface
     /**
      * Send a request to the AI provider.
      *
-     * @param string $prompt The prompt to send
-     * @param array $options Additional options for the request
-     * @return string The AI response
+     * @param string $prompt  The prompt to send
+     * @param array  $options Additional options for the request
+     *
      * @throws \Exception If the request fails
+     *
+     * @return string The AI response
      */
     public function request(string $prompt, array $options = []): string;
 

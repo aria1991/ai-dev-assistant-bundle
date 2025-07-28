@@ -32,16 +32,16 @@ final class ConfigurationHelper
         // Check for placeholder values
         $placeholders = [
             'your_openai_api_key_here',
-            'your_anthropic_api_key_here', 
+            'your_anthropic_api_key_here',
             'your_google_api_key_here',
             'sk-placeholder',
             'placeholder',
             'change_me',
             'null',
-            'false'
+            'false',
         ];
 
-        return !in_array(strtolower(trim($apiKey)), $placeholders, true);
+        return !\in_array(strtolower(trim($apiKey)), $placeholders, true);
     }
 
     /**
@@ -54,20 +54,20 @@ final class ConfigurationHelper
                 'name' => 'OpenAI',
                 'url' => 'https://platform.openai.com/api-keys',
                 'key_format' => 'sk-...',
-                'notes' => 'Most reliable, requires billing account'
+                'notes' => 'Most reliable, requires billing account',
             ],
             'anthropic' => [
                 'name' => 'Anthropic Claude',
                 'url' => 'https://console.anthropic.com/',
                 'key_format' => 'sk-ant-...',
-                'notes' => 'Excellent for code analysis'
+                'notes' => 'Excellent for code analysis',
             ],
             'google' => [
                 'name' => 'Google AI',
                 'url' => 'https://makersuite.google.com/app/apikey',
                 'key_format' => 'AI...',
-                'notes' => 'Free tier available'
-            ]
+                'notes' => 'Free tier available',
+            ],
         ];
     }
 
@@ -135,7 +135,7 @@ ENV;
         return [
             'errors' => $errors,
             'warnings' => $warnings,
-            'is_valid' => empty($errors)
+            'is_valid' => empty($errors),
         ];
     }
 }

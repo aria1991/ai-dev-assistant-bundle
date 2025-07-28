@@ -32,7 +32,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class ConfigTestCommand extends Command
 {
     public function __construct(
-        private readonly AIManager $aiManager
+        private readonly AIManager $aiManager,
     ) {
         parent::__construct();
     }
@@ -54,10 +54,11 @@ final class ConfigTestCommand extends Command
                 '- ANTHROPIC_API_KEY for Anthropic Claude',
                 '- GOOGLE_AI_API_KEY for Google AI',
             ]);
+
             return Command::FAILURE;
         }
 
-        $io->success(sprintf('Found %d available AI provider(s):', count($availableProviders)));
+        $io->success(\sprintf('Found %d available AI provider(s):', \count($availableProviders)));
 
         foreach ($availableProviders as $provider) {
             $io->text("✓ {$provider->getName()}");
@@ -75,15 +76,18 @@ final class ConfigTestCommand extends Command
             if (str_contains(strtoupper($response), 'AI_TEST_SUCCESS')) {
                 $io->success('AI connectivity test passed!');
                 $io->text("Response: {$response}");
+
                 return Command::SUCCESS;
             } else {
                 $io->warning('AI responded but with unexpected content:');
                 $io->text("Response: {$response}");
+
                 return Command::SUCCESS; // Still consider it a success since we got a response
             }
 
         } catch (\Exception $e) {
             $io->error('AI connectivity test failed: ' . $e->getMessage());
+
             return Command::FAILURE;
         }
     }

@@ -28,17 +28,19 @@ final class AIManager
      */
     public function __construct(
         private readonly array $providers,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 
     /**
      * Send a request to AI providers with fallback chain.
      *
-     * @param string $prompt The prompt to send
-     * @param array $options Additional options for the request
-     * @return string The AI response
+     * @param string $prompt  The prompt to send
+     * @param array  $options Additional options for the request
+     *
      * @throws \Exception If all providers fail
+     *
+     * @return string The AI response
      */
     public function request(string $prompt, array $options = []): string
     {
@@ -54,9 +56,10 @@ final class AIManager
                 $response = $provider->request($prompt, $options);
                 $this->logger->info('AI request successful', [
                     'provider' => $provider->getName(),
-                    'prompt_length' => strlen($prompt),
-                    'response_length' => strlen($response),
+                    'prompt_length' => \strlen($prompt),
+                    'response_length' => \strlen($response),
                 ]);
+
                 return $response;
             } catch (\Exception $e) {
                 $lastException = $e;
@@ -67,9 +70,7 @@ final class AIManager
             }
         }
 
-        throw new \Exception(
-            'All AI providers failed. Last error: ' . ($lastException?->getMessage() ?? 'No providers available')
-        );
+        throw new \Exception('All AI providers failed. Last error: ' . ($lastException?->getMessage() ?? 'No providers available'));
     }
 
     /**
@@ -79,16 +80,14 @@ final class AIManager
      */
     public function getAvailableProviders(): array
     {
-        return array_filter($this->providers, fn($provider) => $provider->isAvailable());
+        return array_filter($this->providers, fn ($provider) => $provider->isAvailable());
     }
 
     /**
      * Check if any provider is available.
-     *
-     * @return bool
      */
     public function hasAvailableProvider(): bool
     {
-        return count($this->getAvailableProviders()) > 0;
+        return \count($this->getAvailableProviders()) > 0;
     }
 }

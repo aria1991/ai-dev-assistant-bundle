@@ -29,16 +29,17 @@ final class CodeAnalyzer
     public function __construct(
         private readonly array $analyzers,
         private readonly LoggerInterface $logger,
-        private readonly CacheService $cacheService
+        private readonly CacheService $cacheService,
     ) {
     }
 
     /**
      * Analyze code with all available analyzers.
      *
-     * @param string $code The code to analyze
-     * @param string $filename The filename (optional, for context)
-     * @param array $enabledAnalyzers List of analyzer names to run (null = all)
+     * @param string $code             The code to analyze
+     * @param string $filename         The filename (optional, for context)
+     * @param array  $enabledAnalyzers List of analyzer names to run (null = all)
+     *
      * @return array Complete analysis results
      */
     public function analyzeCode(string $code, string $filename = '', ?array $enabledAnalyzers = null): array
@@ -48,6 +49,7 @@ final class CodeAnalyzer
         // Try to get from cache first
         if ($cached = $this->cacheService->get($cacheKey)) {
             $this->logger->debug('Using cached analysis result', ['filename' => $filename]);
+
             return $cached;
         }
 
@@ -66,7 +68,7 @@ final class CodeAnalyzer
 
         foreach ($this->analyzers as $analyzer) {
             // Skip analyzer if not in enabled list
-            if ($enabledAnalyzers !== null && !in_array($analyzer->getName(), $enabledAnalyzers, true)) {
+            if ($enabledAnalyzers !== null && !\in_array($analyzer->getName(), $enabledAnalyzers, true)) {
                 continue;
             }
 
@@ -110,8 +112,9 @@ final class CodeAnalyzer
     /**
      * Analyze a file.
      *
-     * @param string $filePath Path to the file to analyze
-     * @param array $enabledAnalyzers List of analyzer names to run (null = all)
+     * @param string $filePath         Path to the file to analyze
+     * @param array  $enabledAnalyzers List of analyzer names to run (null = all)
+     *
      * @return array Analysis results
      */
     public function analyzeFile(string $filePath, ?array $enabledAnalyzers = null): array
@@ -149,7 +152,7 @@ final class CodeAnalyzer
      */
     public function getAnalyzerNames(): array
     {
-        return array_map(fn($analyzer) => $analyzer->getName(), $this->analyzers);
+        return array_map(fn ($analyzer) => $analyzer->getName(), $this->analyzers);
     }
 
     private function generateCacheKey(string $code, string $filename, ?array $enabledAnalyzers): string
@@ -165,7 +168,7 @@ final class CodeAnalyzer
 
     private function updateSummary(array &$summary, array $issues): void
     {
-        $summary['total_issues'] += count($issues);
+        $summary['total_issues'] += \count($issues);
 
         foreach ($issues as $issue) {
             $severity = $issue['severity'] ?? 'unknown';

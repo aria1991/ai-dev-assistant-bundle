@@ -98,7 +98,7 @@ GOOGLE_AI_API_KEY=your_google_api_key_here
 ENV;
 
     public function __construct(
-        private readonly string $projectDir
+        private readonly string $projectDir,
     ) {
         parent::__construct();
     }
@@ -112,7 +112,7 @@ ENV;
 
         // Step 1: Create configuration file
         $configPath = $this->projectDir . '/config/packages/ai_dev_assistant.yaml';
-        $configDir = dirname($configPath);
+        $configDir = \dirname($configPath);
 
         if (!$filesystem->exists($configDir)) {
             $filesystem->mkdir($configDir);
@@ -159,7 +159,7 @@ ENV;
             '1. Add your AI provider API keys to the .env file',
             '2. Test the configuration: php bin/console ai-dev-assistant:config-test',
             '3. Run your first analysis: php bin/console ai-dev-assistant:analyze src/',
-            '4. Check the REST API: /ai-dev-assistant/health'
+            '4. Check the REST API: /ai-dev-assistant/health',
         ]);
 
         $io->section('🔑 Getting API Keys:');
@@ -168,14 +168,14 @@ ENV;
             [
                 ['OpenAI', 'https://platform.openai.com/api-keys', 'Most reliable, requires billing'],
                 ['Anthropic', 'https://console.anthropic.com/', 'Great for code analysis'],
-                ['Google AI', 'https://makersuite.google.com/app/apikey', 'Free tier available']
+                ['Google AI', 'https://makersuite.google.com/app/apikey', 'Free tier available'],
             ]
         );
 
         $io->note([
             'You only need one API key to start using the bundle.',
             'The system will automatically fallback between providers.',
-            'For production, we recommend configuring multiple providers.'
+            'For production, we recommend configuring multiple providers.',
         ]);
 
         return Command::SUCCESS;

@@ -25,16 +25,17 @@ final class RateLimiter
 {
     public function __construct(
         private readonly CacheItemPoolInterface $cache,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
     ) {
     }
 
     /**
      * Check if request is allowed for the given identifier.
      *
-     * @param string $identifier Request identifier (e.g., user ID, IP)
-     * @param int $maxRequests Maximum requests allowed
-     * @param int $windowSeconds Time window in seconds
+     * @param string $identifier    Request identifier (e.g., user ID, IP)
+     * @param int    $maxRequests   Maximum requests allowed
+     * @param int    $windowSeconds Time window in seconds
+     *
      * @return bool True if request is allowed
      */
     public function isAllowed(string $identifier, int $maxRequests, int $windowSeconds): bool
@@ -88,7 +89,7 @@ final class RateLimiter
                 'identifier' => $identifier,
                 'error' => $e->getMessage(),
             ]);
-            
+
             // Allow request on error to avoid blocking legitimate requests
             return true;
         }
@@ -97,8 +98,9 @@ final class RateLimiter
     /**
      * Get current request count for identifier.
      *
-     * @param string $identifier Request identifier
-     * @param int $windowSeconds Time window in seconds
+     * @param string $identifier    Request identifier
+     * @param int    $windowSeconds Time window in seconds
+     *
      * @return int Current request count
      */
     public function getCurrentCount(string $identifier, int $windowSeconds): int
@@ -107,12 +109,14 @@ final class RateLimiter
         
         try {
             $item = $this->cache->getItem($key);
+
             return $item->isHit() ? $item->get() : 0;
         } catch (\Exception $e) {
             $this->logger->error('Rate limiter get count error', [
                 'identifier' => $identifier,
                 'error' => $e->getMessage(),
             ]);
+
             return 0;
         }
     }
@@ -120,8 +124,9 @@ final class RateLimiter
     /**
      * Reset rate limit for identifier.
      *
-     * @param string $identifier Request identifier
-     * @param int $windowSeconds Time window in seconds
+     * @param string $identifier    Request identifier
+     * @param int    $windowSeconds Time window in seconds
+     *
      * @return bool True on success
      */
     public function reset(string $identifier, int $windowSeconds): bool
@@ -144,6 +149,7 @@ final class RateLimiter
                 'identifier' => $identifier,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -151,6 +157,7 @@ final class RateLimiter
     private function getCacheKey(string $identifier, int $windowSeconds): string
     {
         $windowStart = floor(time() / $windowSeconds) * $windowSeconds;
-        return sprintf('rate_limit_%s_%d', hash('sha256', $identifier), $windowStart);
+
+        return \sprintf('rate_limit_%s_%d', hash('sha256', $identifier), $windowStart);
     }
 }
