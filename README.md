@@ -299,6 +299,27 @@ vendor/bin/php-cs-fixer fix --dry-run
 - [Troubleshooting](docs/troubleshooting.md)
 - [Contributing](CONTRIBUTING.md)
 
+## 🏷️ Versioning & Releases
+
+This project follows [Semantic Versioning](https://semver.org/) (SemVer):
+
+- **Current Version**: `v1.0.0` - Initial stable release
+- **Packagist**: Auto-updates on new tags via webhook
+- **Release Strategy**: See [TAGGING_STRATEGY.md](TAGGING_STRATEGY.md)
+
+### Quick Release Commands
+
+```bash
+# Create a patch release (bug fixes)
+.\.github\scripts\create-release.ps1 -Version "1.0.1" -Type "patch" -Message "Fix security issue"
+
+# Create a minor release (new features)  
+.\.github\scripts\create-release.ps1 -Version "1.1.0" -Type "minor" -Message "Add new analyzer"
+
+# Create a major release (breaking changes)
+.\.github\scripts\create-release.ps1 -Version "2.0.0" -Type "major" -Message "API redesign"
+```
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
