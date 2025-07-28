@@ -336,5 +336,4 @@ This bundle is licensed under the MIT License. See [LICENSE](LICENSE) for detail
 
 ---
 
-**Made with ❤️ 
-
+**Made with ❤️ by [Aria Vahidi](https://github.com/aria1991) for the Symfony community**
