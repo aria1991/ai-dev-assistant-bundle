@@ -25,18 +25,12 @@
 ###  **Simple Developer Workflow**
 
 #### **Feature Development**
-`ash
+```bash
 git checkout develop
 git checkout -b feature/your-feature
 # Make changes
 git push origin feature/your-feature
 # Create PR to develop (auto-merges if CI passes)
-`
-
-#### **Release Process**
-`ash
-# Create PR from develop to master (requires review)
-`
 
 ###  **GitHub Settings Applied**
 
