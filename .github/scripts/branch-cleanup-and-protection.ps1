@@ -5,7 +5,11 @@ Write-Host ""
 
 # Check current branch status
 Write-Host "Current Branch Status:" -ForegroundColor Cyan
-git log --oneline master -1
+if (git show-ref --verify --quiet refs/heads/master) {
+    git log --oneline master -1
+} else {
+    Write-Host "INFO: 'master' branch does not exist locally." -ForegroundColor Yellow
+}
 try {
     git log --oneline origin/main -1
 } catch {
