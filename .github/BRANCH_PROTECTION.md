@@ -1,56 +1,98 @@
-﻿# Branch Protection Strategy
+﻿#  Branch Protection Strategy
 
-## Protected Branches
-- `main` - Primary development branch
-- `master` - Packagist compatibility branch
-- `release/*` - Release branches
+## Expert-Level Branch Protection with Developer-Friendly Practices
 
-## Protection Rules
+###  **Branching Strategy**
+- **master**: Production-ready code only (protected)
+- **develop**: Integration branch for features (lightly protected)
+- **feature/***: Feature development branches
+- **fix/***: Bug fix branches
 
-### Main Branch (`main`)
--  Require pull request reviews before merging
--  Require status checks to pass before merging
--  Required status checks:
-  - `validation`
-  - `security`
-  - `quality (8.2)`
-  - `quality (8.3)`
-  - `compatibility`
--  Require branches to be up to date before merging
--  Require linear history
--  Restrict pushes that create new files
--  Allow force pushes: **NO**
--  Allow deletions: **NO**
+###  **Branch Protection Rules**
 
-### Master Branch (`master`)
--  Require pull request reviews before merging
--  Require status checks to pass before merging
--  Required status checks:
-  - `validation`
-  - `security`
-  - `quality (8.2)`
-  - `quality (8.3)`
--  Require branches to be up to date before merging
--  Allow force pushes: **NO**
--  Allow deletions: **NO**
+#### **Master Branch Protection**
+-  Require PR with 1 approval
+-  All CI/CD checks must pass
+-  No direct pushes (admins only)
+-  No force pushes or deletions
 
-## Reviewer Requirements
-- **Minimum reviewers**: 1
-- **Dismiss stale reviews**: Yes
-- **Require review from code owners**: Yes
-- **Restrict reviews to code owners**: No
+#### **Develop Branch Protection**
+-  CI/CD checks must pass  
+-  Auto-merge enabled
+-  Direct push allowed for maintainers
+-  Fast iteration friendly
 
-## Status Check Requirements
-All CI/CD checks must pass:
-1. Code Validation
-2. Security Analysis
-3. Quality Assurance (PHP 8.2 & 8.3)
-4. Compatibility Testing
-5. Performance Benchmarks (for PRs)
+###  **Simple Developer Workflow**
 
-## Additional Security
-- Enable vulnerability alerts
-- Enable automated security fixes
-- Enable dependency graph
-- Enable secret scanning
-- Enable code scanning (CodeQL)
+#### **Feature Development**
+`ash
+git checkout develop
+git checkout -b feature/your-feature
+# Make changes
+git push origin feature/your-feature
+# Create PR to develop (auto-merges if CI passes)
+`
+
+#### **Release Process**
+`ash
+# Create PR from develop to master (requires review)
+`
+
+###  **GitHub Settings Applied**
+
+**Master Branch:**
+- Require pull request before merging (1 approval)
+- Require status checks: quality-assurance, security-analysis, package-validation
+- Restrict pushes to admins
+- No force pushes/deletions
+
+**Develop Branch:**
+- Require status checks: quality-assurance, security-analysis
+- Allow direct pushes for maintainers
+- Auto-merge enabled for passing CI
+
+This balances enterprise security with developer productivity!
+
+### **Setup Instructions**
+
+#### **Cross-Platform Setup (Recommended)**
+Works on Linux, macOS, and Windows:
+
+**Quick Start:**
+```bash
+# Linux/macOS
+make setup-protection
+
+# Windows
+.github\scripts\setup-branch-protection.bat
+
+# Manual (any platform)
+./.github/scripts/setup-branch-protection.sh  # Unix-like
+.\.github\scripts\setup-branch-protection.ps1 # Windows PowerShell
+```
+
+📖 **Complete Guide:** [Cross-Platform Setup Instructions](.github/CROSS_PLATFORM_SETUP.md)
+
+#### **Legacy PowerShell Setup (Windows Only)**
+```powershell
+# Run the automated setup script
+.\.github\scripts\apply-branch-protection.ps1
+```
+
+#### **Manual Setup**
+If you prefer manual setup, follow the detailed guide:
+- 📖 [Complete Setup Guide](.github/BRANCH_PROTECTION_SETUP.md)
+
+#### **Verification**
+Test your protection rules:
+```bash
+# Test feature development workflow
+git checkout develop
+git checkout -b feature/test-protection
+echo "test" > test.txt
+git add test.txt
+git commit -m "Test branch protection"
+git push origin feature/test-protection
+# Create PR to develop → should auto-merge after CI passes
+# Create PR from develop to master → should require approval
+``` 
