@@ -304,4 +304,5 @@ This bundle is licensed under the MIT License. See [LICENSE](LICENSE) for detail
 
 ---
 
-**Made with ❤️ by [Aria Vahidi](https://github.com/aria1991)**
+**Made with ❤️ 
+
