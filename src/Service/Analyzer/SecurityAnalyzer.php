@@ -23,16 +23,17 @@ use Aria1991\AIDevAssistantBundle\Service\AIManager;
 final class SecurityAnalyzer implements AnalyzerInterface
 {
     public function __construct(
-        private readonly AIManager $aiManager
+        private readonly AIManager $aiManager,
     ) {
     }
 
     public function analyze(string $code, string $filename = ''): array
     {
-        $prompt = sprintf($this->getPromptTemplate(), $filename, $code);
-        
+        $prompt = \sprintf($this->getPromptTemplate(), $filename, $code);
+
         try {
             $response = $this->aiManager->request($prompt);
+
             return $this->parseResponse($response);
         } catch (\Exception $e) {
             return [
@@ -53,7 +54,7 @@ final class SecurityAnalyzer implements AnalyzerInterface
 Analyze the following PHP code for security vulnerabilities and issues. Focus on:
 
 1. SQL injection vulnerabilities
-2. XSS (Cross-Site Scripting) vulnerabilities  
+2. XSS (Cross-Site Scripting) vulnerabilities
 3. CSRF (Cross-Site Request Forgery) issues
 4. Input validation problems
 5. Authentication and authorization flaws
@@ -75,7 +76,7 @@ Provide your analysis in JSON format:
         {
             "line": number,
             "type": "vulnerability_type",
-            "severity": "low|medium|high|critical", 
+            "severity": "low|medium|high|critical",
             "message": "Description of the issue",
             "suggestion": "How to fix it"
         }

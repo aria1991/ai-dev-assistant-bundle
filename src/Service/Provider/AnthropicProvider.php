@@ -30,7 +30,7 @@ final class AnthropicProvider implements AIProviderInterface
         private readonly LoggerInterface $logger,
         private readonly string $apiKey,
         private readonly string $model = 'claude-3-sonnet-20240229',
-        private readonly int $maxTokens = 4000
+        private readonly int $maxTokens = 4000,
     ) {
     }
 
@@ -69,7 +69,7 @@ final class AnthropicProvider implements AIProviderInterface
         } catch (\Exception $e) {
             $this->logger->error('Anthropic API request failed', [
                 'error' => $e->getMessage(),
-                'prompt_length' => strlen($prompt),
+                'prompt_length' => \strlen($prompt),
             ]);
             throw $e;
         }
@@ -77,7 +77,7 @@ final class AnthropicProvider implements AIProviderInterface
 
     public function isAvailable(): bool
     {
-        return !empty($this->apiKey) 
+        return !empty($this->apiKey)
             && $this->apiKey !== 'your_anthropic_api_key_here'
             && str_starts_with($this->apiKey, 'sk-ant-');
     }

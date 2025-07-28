@@ -29,7 +29,7 @@ final class GoogleProvider implements AIProviderInterface
         private readonly HttpClientInterface $httpClient,
         private readonly LoggerInterface $logger,
         private readonly string $apiKey,
-        private readonly string $model = 'gemini-pro'
+        private readonly string $model = 'gemini-pro',
     ) {
     }
 
@@ -74,7 +74,7 @@ final class GoogleProvider implements AIProviderInterface
         } catch (\Exception $e) {
             $this->logger->error('Google AI API request failed', [
                 'error' => $e->getMessage(),
-                'prompt_length' => strlen($prompt),
+                'prompt_length' => \strlen($prompt),
             ]);
             throw $e;
         }
@@ -82,9 +82,9 @@ final class GoogleProvider implements AIProviderInterface
 
     public function isAvailable(): bool
     {
-        return !empty($this->apiKey) 
+        return !empty($this->apiKey)
             && $this->apiKey !== 'your_google_api_key_here'
-            && (str_starts_with($this->apiKey, 'AI') || strlen($this->apiKey) > 20);
+            && (str_starts_with($this->apiKey, 'AI') || \strlen($this->apiKey) > 20);
     }
 
     public function getName(): string

@@ -27,7 +27,7 @@ final class CacheService
         private readonly CacheItemPoolInterface $cache,
         private readonly LoggerInterface $logger,
         private readonly bool $enabled = true,
-        private readonly int $ttl = 3600
+        private readonly int $ttl = 3600,
     ) {
     }
 
@@ -35,6 +35,7 @@ final class CacheService
      * Get item from cache.
      *
      * @param string $key Cache key
+     *
      * @return mixed|null Cached value or null if not found
      */
     public function get(string $key): mixed
@@ -47,6 +48,7 @@ final class CacheService
             $item = $this->cache->getItem($key);
             if ($item->isHit()) {
                 $this->logger->debug('Cache hit', ['key' => $key]);
+
                 return $item->get();
             }
         } catch (\Exception $e) {
@@ -62,9 +64,10 @@ final class CacheService
     /**
      * Set item in cache.
      *
-     * @param string $key Cache key
-     * @param mixed $value Value to cache
-     * @param int|null $ttl Time to live (null = default)
+     * @param string   $key   Cache key
+     * @param mixed    $value Value to cache
+     * @param int|null $ttl   Time to live (null = default)
+     *
      * @return bool True on success
      */
     public function set(string $key, mixed $value, ?int $ttl = null): bool
@@ -77,19 +80,20 @@ final class CacheService
             $item = $this->cache->getItem($key);
             $item->set($value);
             $item->expiresAfter($ttl ?? $this->ttl);
-            
+
             $result = $this->cache->save($item);
-            
+
             if ($result) {
                 $this->logger->debug('Cache set', ['key' => $key, 'ttl' => $ttl ?? $this->ttl]);
             }
-            
+
             return $result;
         } catch (\Exception $e) {
             $this->logger->warning('Cache set failed', [
                 'key' => $key,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -98,6 +102,7 @@ final class CacheService
      * Delete item from cache.
      *
      * @param string $key Cache key
+     *
      * @return bool True on success
      */
     public function delete(string $key): bool
@@ -108,17 +113,18 @@ final class CacheService
 
         try {
             $result = $this->cache->deleteItem($key);
-            
+
             if ($result) {
                 $this->logger->debug('Cache delete', ['key' => $key]);
             }
-            
+
             return $result;
         } catch (\Exception $e) {
             $this->logger->warning('Cache delete failed', [
                 'key' => $key,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -136,24 +142,23 @@ final class CacheService
 
         try {
             $result = $this->cache->clear();
-            
+
             if ($result) {
                 $this->logger->info('Cache cleared');
             }
-            
+
             return $result;
         } catch (\Exception $e) {
             $this->logger->warning('Cache clear failed', [
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
 
     /**
      * Check if cache is enabled.
-     *
-     * @return bool
      */
     public function isEnabled(): bool
     {

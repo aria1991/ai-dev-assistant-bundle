@@ -23,8 +23,9 @@ interface AnalyzerInterface
     /**
      * Analyze the given code.
      *
-     * @param string $code The code to analyze
+     * @param string $code     The code to analyze
      * @param string $filename The filename (optional, for context)
+     *
      * @return array Analysis results
      */
     public function analyze(string $code, string $filename = ''): array;
