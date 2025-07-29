@@ -99,18 +99,17 @@ services:
         tags:
             - { name: 'console.command' }
 
-    # Advanced Cache Service (v1.3+)
+    # Advanced Cache Service (v1.3+) - simplified configuration
     Aria1991\AIDevAssistantBundle\Service\AdvancedCacheService:
         arguments:
             $cache: '@cache.app'
-            $logger: '@logger'
-        tags:
-            - { name: 'monolog.logger', channel: 'ai_dev_assistant' }
+            $logger: '@?logger'
 
-    # WebProfiler Data Collector (v1.4+) - only loaded when WebProfiler is available
-    Aria1991\AIDevAssistantBundle\DataCollector\AIAnalysisDataCollector:
-        arguments:
-            $codeAnalyzer: '@Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer'
-            $aiManager: '@Aria1991\AIDevAssistantBundle\Service\AIManager'
-        tags:
-            - { name: 'data_collector', template: 'profiler/ai_analysis.html.twig', id: 'ai_analysis', priority: 300 }
+    # WebProfiler Data Collector (v1.4+) - conditional loading
+    # Note: Only loads when WebProfiler bundle is available
+    # Aria1991\AIDevAssistantBundle\DataCollector\AIAnalysisDataCollector:
+    #     arguments:
+    #         $codeAnalyzer: '@Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer'
+    #         $aiManager: '@Aria1991\AIDevAssistantBundle\Service\AIManager'
+    #     tags:
+    #         - { name: 'data_collector', template: 'profiler/ai_analysis.html.twig', id: 'ai_analysis', priority: 300 }
