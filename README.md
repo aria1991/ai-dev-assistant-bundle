@@ -76,11 +76,27 @@ Install the bundle via Composer:
 composer require aria1991/ai-dev-assistant-bundle
 ```
 
-The bundle will automatically:
-- ✅ Register itself in `config/bundles.php`
-- ✅ Create configuration files  
-- ✅ Set up environment variables
+Then run the installation command:
+
+```bash
+php bin/console ai-dev-assistant:install
+```
+
+The installer will:
+- ✅ Create configuration files in `config/packages/`
+- ✅ Add environment variables to your `.env` file  
 - ✅ Show you exactly what to do next
+- ✅ Provide links to get free API keys
+
+**Note:** You may need to manually add the bundle to `config/bundles.php` if using older Symfony versions:
+
+```php
+// config/bundles.php
+return [
+    // ... other bundles
+    Aria1991\AIDevAssistantBundle\AIDevAssistantBundle::class => ['all' => true],
+];
+```
 
 **Just add one API key and you're ready!**
 
