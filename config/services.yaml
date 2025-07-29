@@ -10,31 +10,26 @@ services:
             - '../src/DependencyInjection/'
             - '../src/AIDevAssistantBundle.php'
 
-    # HTTP Client for AI providers
-    Aria1991\AIDevAssistantBundle\Service\Provider\HttpClientInterface:
-        class: Symfony\Contracts\HttpClient\HttpClientInterface
-        factory: ['@http_client', 'create']
-
-    # AI Providers with improved configuration
+    # AI Providers with proper conditional configuration
     Aria1991\AIDevAssistantBundle\Service\Provider\OpenAIProvider:
         arguments:
             $httpClient: '@http_client'
-            $apiKey: '%env(OPENAI_API_KEY)%'
-            $model: '%ai_dev_assistant.ai_providers.openai.model%'
-            $maxTokens: '%ai_dev_assistant.ai_providers.openai.max_tokens%'
+            $apiKey: '%env(default::OPENAI_API_KEY)%'
+            $model: '%ai_dev_assistant.ai.providers.openai.model%'
+            $maxTokens: '%ai_dev_assistant.ai.providers.openai.max_tokens%'
 
     Aria1991\AIDevAssistantBundle\Service\Provider\AnthropicProvider:
         arguments:
             $httpClient: '@http_client'
-            $apiKey: '%env(ANTHROPIC_API_KEY)%'
-            $model: '%ai_dev_assistant.ai_providers.anthropic.model%'
-            $maxTokens: '%ai_dev_assistant.ai_providers.anthropic.max_tokens%'
+            $apiKey: '%env(default::ANTHROPIC_API_KEY)%'
+            $model: '%ai_dev_assistant.ai.providers.anthropic.model%'
+            $maxTokens: '%ai_dev_assistant.ai.providers.anthropic.max_tokens%'
 
     Aria1991\AIDevAssistantBundle\Service\Provider\GoogleProvider:
         arguments:
             $httpClient: '@http_client'
-            $apiKey: '%env(GOOGLE_AI_API_KEY)%'
-            $model: '%ai_dev_assistant.ai_providers.google.model%'
+            $apiKey: '%env(default::GOOGLE_AI_API_KEY)%'
+            $model: '%ai_dev_assistant.ai.providers.google.model%'
 
     # AI Manager with provider fallback chain
     Aria1991\AIDevAssistantBundle\Service\AIManager:
@@ -48,6 +43,42 @@ services:
     Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer: ~
     Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer: ~
     Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer: ~
+    Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer: ~
+
+    # Main Code Analyzer Service
+    Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer:
+        arguments:
+            $analyzers:
+                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer'
+                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer'
+                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer'
+                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer'
+            $cacheService: '@Aria1991\AIDevAssistantBundle\Service\CacheService'
+
+    # Cache Service
+    Aria1991\AIDevAssistantBundle\Service\CacheService:
+        arguments:
+            $cache: '@cache.app'
+            $ttl: '%ai_dev_assistant.cache.ttl%'
+            $enabled: '%ai_dev_assistant.cache.enabled%'
+
+    # Rate Limiter
+    Aria1991\AIDevAssistantBundle\Service\RateLimiter:
+        arguments:
+            $cache: '@cache.app'
+
+    # Commands
+    Aria1991\AIDevAssistantBundle\Command\AnalyzeCodeCommand:
+        tags:
+            - { name: 'console.command' }
+
+    Aria1991\AIDevAssistantBundle\Command\ConfigTestCommand:
+        tags:
+            - { name: 'console.command' }
+
+    Aria1991\AIDevAssistantBundle\Command\InstallCommand:
+        tags:
+            - { name: 'console.command' }
     Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer: ~
 
     # Main Code Analyzer

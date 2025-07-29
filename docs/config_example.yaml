@@ -1,5 +1,5 @@
 # Example configuration for AI Development Assistant Bundle
-# Add this to your config/packages/ai_dev_assistant.yaml
+# Copy this file to your application's config/packages/ai_dev_assistant.yaml
 
 ai_dev_assistant:
     # Enable or disable the bundle
@@ -24,13 +24,14 @@ ai_dev_assistant:
     analysis:
         enabled_analyzers:
             - 'security'
-            - 'performance'
+            - 'performance' 
             - 'quality'
             - 'documentation'
         max_file_size: 1048576  # 1MB
         excluded_paths:
             - 'vendor/'
             - 'var/cache/'
+            - 'var/log/'
             - 'node_modules/'
             - 'public/build/'
     
