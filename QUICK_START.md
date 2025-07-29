@@ -52,18 +52,27 @@ php bin/console ai-dev-assistant:analyze src/ --format=json
 
 You now have AI-powered code analysis running on your Symfony application!
 
-## 🌐 REST API Usage
+## 💻 Service Integration (Optional)
 
-The bundle automatically exposes REST API endpoints:
+Want to use AI analysis in your own code? Inject the services:
 
-```bash
-# Health check
-curl http://localhost:8000/ai-dev-assistant/health
+```php
+use Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer;
 
-# Analyze code snippet
-curl -X POST http://localhost:8000/ai-dev-assistant/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"code": "<?php class Test { public function hello() { echo \"world\"; } }"}'
+class YourController extends AbstractController 
+{
+    public function __construct(
+        private CodeAnalyzer $codeAnalyzer
+    ) {}
+    
+    public function analyzeCode(): JsonResponse
+    {
+        $code = file_get_contents('src/Service/Example.php');
+        $result = $this->codeAnalyzer->analyze($code, 'src/Service/Example.php');
+        
+        return $this->json($result);
+    }
+}
 ```
 
 ## 🔧 Common Issues
@@ -72,12 +81,14 @@ curl -X POST http://localhost:8000/ai-dev-assistant/analyze \
 **"Rate limit exceeded"** → You're making too many requests, wait a minute  
 **"File too large"** → Files must be under 1MB, configure `max_file_size` if needed
 
-## 🎉 Advanced Features
+## 🎉 What You Get
 
-- **Multiple Analyzers**: Security, Performance, Quality, Documentation
+- **Console Commands**: Perfect for CI/CD integration
+- **Multiple Analyzers**: Security, Performance, Quality, Documentation  
 - **Caching**: Results are cached for 1 hour by default
 - **Rate Limiting**: Built-in protection against API abuse
 - **Fallback Chain**: If OpenAI fails, tries Anthropic, then Google
+- **Service Integration**: Use AI analysis in your own controllers/services
 - **Production Ready**: Full logging, error handling, metrics
 
 Need help? Check the full [README.md](README.md) for detailed documentation.
