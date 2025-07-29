@@ -1,0 +1,42 @@
+name: Auto-assign Reviewers
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  assign-reviewers:
+    runs-on: ubuntu-latest
+    if: github.actor != 'aria1991' # Don't assign reviewer if PR is from owner
+    
+    steps:
+      - name: Auto-assign reviewer
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            
+            // Always assign aria1991 as reviewer for external PRs
+            await github.rest.pulls.requestReviewers({
+              owner,
+              repo,
+              pull_number: number,
+              reviewers: ['aria1991']
+            });
+            
+            console.log('✅ Assigned aria1991 as reviewer');
+            
+      - name: Add review requirement label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: number,
+              labels: ['needs-review']
+            });
+            
+            console.log('✅ Added needs-review label');
