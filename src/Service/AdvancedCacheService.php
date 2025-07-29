@@ -206,25 +206,19 @@ final class AdvancedCacheService
         $similarity = 0.0;
 
         foreach ($weights as $component => $weight) {
-            $componentSimilarity = match ($component) {
-                'functions' => $this->calculateArraySimilarity(
+            $componentSimilarity = 0.0;
+            
+            if (\in_array($component, ['functions', 'classes', 'variables'], true)) {
+                $componentSimilarity = $this->calculateArraySimilarity(
                     $sig1[$component] ?? [],
                     $sig2[$component] ?? []
-                ),
-                'classes' => $this->calculateArraySimilarity(
+                );
+            } elseif ($component === 'metrics') {
+                $componentSimilarity = $this->calculateMetricsSimilarity(
                     $sig1[$component] ?? [],
                     $sig2[$component] ?? []
-                ),
-                'variables' => $this->calculateArraySimilarity(
-                    $sig1[$component] ?? [],
-                    $sig2[$component] ?? []
-                ),
-                'metrics' => $this->calculateMetricsSimilarity(
-                    $sig1[$component] ?? [],
-                    $sig2[$component] ?? []
-                ),
-                default => 0.0,
-            };
+                );
+            }
 
             $similarity += $componentSimilarity * $weight;
         }
@@ -248,7 +242,7 @@ final class AdvancedCacheService
         $intersection = \count(array_intersect($arr1, $arr2));
         $union = \count(array_unique(array_merge($arr1, $arr2)));
 
-        return $union > 0 ? $intersection / $union : 0.0;
+        return $union === 0 ? 0.0 : $intersection / $union;
     }
 
     /**
@@ -286,7 +280,7 @@ final class AdvancedCacheService
     public function getMetrics(): array
     {
         $total = $this->metrics['hits'] + $this->metrics['misses'];
-        $hitRate = $total > 0 ? ($this->metrics['hits'] / $total) * 100 : 0;
+        $hitRate = $total > 0 ? (float) (($this->metrics['hits'] / $total) * 100) : 0.0;
 
         return [
             'enabled' => $this->enabled,
