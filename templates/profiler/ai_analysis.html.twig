@@ -1,0 +1,179 @@
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+    <style>
+        .ai-analysis-metrics { margin-bottom: 20px; }
+        .ai-analysis-metric { 
+            display: inline-block; 
+            margin-right: 20px; 
+            padding: 10px; 
+            background: #f8f9fa; 
+            border-radius: 4px; 
+        }
+        .ai-analysis-metric strong { display: block; font-size: 18px; }
+        .ai-analysis-status-good { color: #28a745; }
+        .ai-analysis-status-warning { color: #ffc107; }
+        .ai-analysis-status-error { color: #dc3545; }
+    </style>
+{% endblock %}
+
+{% block toolbar %}
+    {% set icon %}
+        <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path fill="#aaa" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+        <span class="sf-toolbar-value">{{ collector.requestCount }}</span>
+    {% endset %}
+
+    {% set text %}
+        <div class="sf-toolbar-info-piece">
+            <b>AI Requests</b>
+            <span class="sf-toolbar-status">{{ collector.requestCount }}</span>
+        </div>
+        <div class="sf-toolbar-info-piece">
+            <b>Cache Hit Rate</b>
+            <span class="sf-toolbar-status">{{ collector.cacheMetrics.hit_rate|default(0) }}%</span>
+        </div>
+        <div class="sf-toolbar-info-piece">
+            <b>Execution Time</b>
+            <span class="sf-toolbar-status">{{ collector.totalExecutionTime|number_format(2) }}ms</span>
+        </div>
+    {% endset %}
+
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: profiler_url, status: '', additional_classes: 'sf-toolbar-block-right' }) }}
+{% endblock %}
+
+{% block menu %}
+    <span class="label">
+        <span class="icon">
+            <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path fill="#aaa" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+        </span>
+        <strong>AI Analysis</strong>
+    </span>
+{% endblock %}
+
+{% block panel %}
+    <h2>AI Development Assistant</h2>
+
+    <div class="ai-analysis-metrics">
+        <div class="ai-analysis-metric">
+            <strong>{{ collector.requestCount }}</strong>
+            <span>Total Requests</span>
+        </div>
+        <div class="ai-analysis-metric">
+            <strong>{{ collector.cacheMetrics.hit_rate|default(0) }}%</strong>
+            <span>Cache Hit Rate</span>
+        </div>
+        <div class="ai-analysis-metric">
+            <strong>{{ collector.totalExecutionTime|number_format(2) }}ms</strong>
+            <span>Total Time</span>
+        </div>
+        <div class="ai-analysis-metric">
+            <strong>{{ collector.cacheMetrics.semantic_hits|default(0) }}</strong>
+            <span>Semantic Hits</span>
+        </div>
+    </div>
+
+    {% if collector.cacheMetrics %}
+        <h3>Cache Performance</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cache Enabled</td>
+                    <td>
+                        {% if collector.cacheMetrics.enabled %}
+                            <span class="ai-analysis-status-good">✓ Yes</span>
+                        {% else %}
+                            <span class="ai-analysis-status-warning">✗ No</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Cache Hits</td>
+                    <td>{{ collector.cacheMetrics.hits|default(0) }}</td>
+                </tr>
+                <tr>
+                    <td>Cache Misses</td>
+                    <td>{{ collector.cacheMetrics.misses|default(0) }}</td>
+                </tr>
+                <tr>
+                    <td>Semantic Hits</td>
+                    <td>{{ collector.cacheMetrics.semantic_hits|default(0) }}</td>
+                </tr>
+                <tr>
+                    <td>Hit Rate</td>
+                    <td>{{ collector.cacheMetrics.hit_rate|default(0) }}%</td>
+                </tr>
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if collector.providersStatus %}
+        <h3>AI Providers Status</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Provider</th>
+                    <th>Status</th>
+                    <th>Last Used</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for provider in collector.providersStatus %}
+                    <tr>
+                        <td>{{ provider.name }}</td>
+                        <td>
+                            {% if provider.available %}
+                                <span class="ai-analysis-status-good">Available</span>
+                            {% else %}
+                                <span class="ai-analysis-status-error">Unavailable</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ provider.last_used|date('Y-m-d H:i:s') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if collector.recentAnalyses %}
+        <h3>Recent Analyses</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>File</th>
+                    <th>Analyzer</th>
+                    <th>Duration</th>
+                    <th>Issues Found</th>
+                    <th>Cached</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for analysis in collector.recentAnalyses %}
+                    <tr>
+                        <td>{{ analysis.filename }}</td>
+                        <td>{{ analysis.analyzer }}</td>
+                        <td>{{ analysis.duration|number_format(2) }}ms</td>
+                        <td>{{ analysis.issues_count }}</td>
+                        <td>
+                            {% if analysis.cached %}
+                                <span class="ai-analysis-status-good">✓</span>
+                            {% else %}
+                                <span class="ai-analysis-status-warning">✗</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
