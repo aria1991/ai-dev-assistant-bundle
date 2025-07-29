@@ -71,10 +71,6 @@ services:
         arguments:
             $cache: '@cache.app'
 
-    # Controllers
-    Aria1991\AIDevAssistantBundle\Controller\AnalysisController:
-        tags: ['controller.service_arguments']
-
     # Commands
     Aria1991\AIDevAssistantBundle\Command\AnalyzeCodeCommand:
         tags:

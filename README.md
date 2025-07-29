@@ -145,24 +145,22 @@ php bin/console ai:test-providers --provider=openai --model=gpt-4
 ```php
 use Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer;
 
-class YourController
+class YourService
 {
     public function __construct(
         private CodeAnalyzer $codeAnalyzer
     ) {
     }
 
-    public function analyzeCode(): Response
+    public function analyzeCodeFile(string $filePath): array
     {
-        $code = file_get_contents('path/to/your/file.php');
+        $code = file_get_contents($filePath);
         
-        $result = $this->codeAnalyzer->analyze(
+        return $this->codeAnalyzer->analyze(
             code: $code,
-            filePath: 'src/Controller/YourController.php',
+            filePath: $filePath,
             analysisType: 'comprehensive' // 'code_quality', 'architecture', 'performance', 'comprehensive'
         );
-        
-        return $this->json($result);
     }
 }
 ```
