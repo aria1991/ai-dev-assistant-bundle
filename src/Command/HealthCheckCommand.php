@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Aria1991\AIDevAssistantBundle\Command;
 
-use Aria1991\AIDevAssistantBundle\Service\AIManager;
 use Aria1991\AIDevAssistantBundle\Service\ConfigurationHelper;
 use Aria1991\AIDevAssistantBundle\Service\Provider\AIProviderInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -36,7 +35,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 final class HealthCheckCommand extends Command
 {
     public function __construct(
-        private readonly AIManager $aiManager,
         private readonly ParameterBagInterface $parameterBag,
         private readonly iterable $providers,
     ) {
@@ -48,19 +46,16 @@ final class HealthCheckCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $io->title('AI Development Assistant Bundle - Health Check');
 
-        $overallHealth = true;
-
         // Check configuration
         $configHealth = $this->checkConfiguration($io);
-        $overallHealth = $overallHealth && $configHealth;
 
         // Check providers
         $providersHealth = $this->checkProviders($io);
-        $overallHealth = $overallHealth && $providersHealth;
 
         // Check system requirements
         $systemHealth = $this->checkSystemRequirements($io);
-        $overallHealth = $overallHealth && $systemHealth;
+
+        $overallHealth = $configHealth && $providersHealth && $systemHealth;
 
         // Final status
         if ($overallHealth) {
@@ -103,7 +98,7 @@ final class HealthCheckCommand extends Command
 
         $validation = ConfigurationHelper::validateConfiguration($config);
 
-        $table = new Table($output);
+        $table = new Table($io);
         $table->setHeaders(['Check', 'Status', 'Details']);
 
         $hasErrors = !empty($validation['errors']);
@@ -130,7 +125,7 @@ final class HealthCheckCommand extends Command
     {
         $io->section('AI Providers Check');
 
-        $table = new Table($output);
+        $table = new Table($io);
         $table->setHeaders(['Provider', 'Status', 'Details']);
 
         $anyAvailable = false;
@@ -167,10 +162,11 @@ final class HealthCheckCommand extends Command
     {
         $io->section('System Requirements Check');
 
-        $table = new Table($output);
+        $table = new Table($io);
         $table->setHeaders(['Requirement', 'Status', 'Details']);
 
         $allPassed = true;
+        $checks = [];
 
         // PHP version
         $phpVersion = \PHP_VERSION;
@@ -181,7 +177,7 @@ final class HealthCheckCommand extends Command
             $phpOk ? '✅ PASS' : '❌ FAIL',
             "Current: {$phpVersion}, Required: >= {$minPhpVersion}",
         ]);
-        $allPassed = $allPassed && $phpOk;
+        $checks[] = $phpOk;
 
         // Required extensions
         $requiredExtensions = ['json', 'curl', 'mbstring'];
@@ -192,7 +188,7 @@ final class HealthCheckCommand extends Command
                 $loaded ? '✅ PASS' : '❌ FAIL',
                 $loaded ? 'Loaded' : 'Not loaded',
             ]);
-            $allPassed = $allPassed && $loaded;
+            $checks[] = $loaded;
         }
 
         // Memory limit
@@ -206,6 +202,7 @@ final class HealthCheckCommand extends Command
 
         $table->render();
 
+        $allPassed = !in_array(false, $checks, true);
         return $allPassed;
     }
 

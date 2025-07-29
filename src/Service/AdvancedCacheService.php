@@ -156,10 +156,10 @@ final class AdvancedCacheService
     private function generateCodeHash(string $code): string
     {
         // Normalize code by removing comments and whitespace variations
-        $normalized = preg_replace('/\/\*[\s\S]*?\*\/|\/\/.*$/m', '', $code);
-        $normalized = preg_replace('/\s+/', ' ', $normalized);
+        $normalized = preg_replace('/\/\*[\s\S]*?\*\/|\/\/.*$/m', '', $code) ?? $code;
+        $normalized = preg_replace('/\s+/', ' ', $normalized) ?? $normalized;
 
-        return hash('sha256', trim($normalized));
+        return hash('sha256', trim($normalized) ?: '');
     }
 
     /**
@@ -171,15 +171,15 @@ final class AdvancedCacheService
 
         // Extract function/method names
         preg_match_all('/function\s+(\w+)\s*\(/i', $code, $functions);
-        $signature['functions'] = array_unique($functions[1] ?? []);
+        $signature['functions'] = array_unique($functions[1]);
 
         // Extract class names
         preg_match_all('/class\s+(\w+)/i', $code, $classes);
-        $signature['classes'] = array_unique($classes[1] ?? []);
+        $signature['classes'] = array_unique($classes[1]);
 
         // Extract variable names
         preg_match_all('/\$(\w+)/i', $code, $variables);
-        $signature['variables'] = array_unique(\array_slice($variables[1] ?? [], 0, 20)); // Limit to avoid huge arrays
+        $signature['variables'] = array_unique(\array_slice($variables[1], 0, 20)); // Limit to avoid huge arrays
 
         // Code metrics
         $signature['metrics'] = [
@@ -207,7 +207,15 @@ final class AdvancedCacheService
 
         foreach ($weights as $component => $weight) {
             $componentSimilarity = match ($component) {
-                'functions', 'classes', 'variables' => $this->calculateArraySimilarity(
+                'functions' => $this->calculateArraySimilarity(
+                    $sig1[$component] ?? [],
+                    $sig2[$component] ?? []
+                ),
+                'classes' => $this->calculateArraySimilarity(
+                    $sig1[$component] ?? [],
+                    $sig2[$component] ?? []
+                ),
+                'variables' => $this->calculateArraySimilarity(
                     $sig1[$component] ?? [],
                     $sig2[$component] ?? []
                 ),

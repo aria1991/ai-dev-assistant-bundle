@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Aria1991\AIDevAssistantBundle\DataCollector;
 
 use Aria1991\AIDevAssistantBundle\Service\AdvancedCacheService;
-use Aria1991\AIDevAssistantBundle\Service\AIManager;
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +27,6 @@ final class AIAnalysisDataCollector extends AbstractDataCollector
 {
     public function __construct(
         private readonly ?AdvancedCacheService $cacheService = null,
-        private readonly ?AIManager $aiManager = null,
     ) {
     }
 
