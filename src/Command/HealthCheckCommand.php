@@ -202,7 +202,8 @@ final class HealthCheckCommand extends Command
 
         $table->render();
 
-        $allPassed = !in_array(false, $checks, true);
+        $allPassed = !\in_array(false, $checks, true);
+
         return $allPassed;
     }
 
