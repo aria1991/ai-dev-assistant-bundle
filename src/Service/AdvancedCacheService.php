@@ -242,7 +242,7 @@ final class AdvancedCacheService
         $intersection = \count(array_intersect($arr1, $arr2));
         $union = \count(array_unique(array_merge($arr1, $arr2)));
 
-        return $union === 0 ? 0.0 : $intersection / $union;
+        return $intersection / $union;
     }
 
     /**
@@ -279,7 +279,7 @@ final class AdvancedCacheService
      */
     public function getMetrics(): array
     {
-        $total = $this->metrics['hits'] + $this->metrics['misses'];
+        $total = (int) ($this->metrics['hits'] + $this->metrics['misses']);
         $hitRate = $total > 0 ? (float) (($this->metrics['hits'] / $total) * 100) : 0.0;
 
         return [
