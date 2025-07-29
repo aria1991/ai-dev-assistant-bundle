@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Performance analysis for optimization opportunities
 - Code quality analysis for best practices
 - Documentation analysis for completeness
-- RESTful API endpoints for code analysis
+- Injectable services for code analysis
 - Console commands for CLI usage
 - Caching system for analysis results
 - Rate limiting for API protection

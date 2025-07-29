@@ -1,6 +1,41 @@
 ﻿# Contributing to AI Development Assistant Bundle
 
-Thank you for your interest in contributing! This guide will help you get started with contributing to this project.
+Thank yo- performance- i: AI provider integrations
+- analyzer: Code analysis components
+- security: Security-related changes
+- performance: Performance improvements
+- docs: Documentation
+- ci: CI/CD pipeline
+- tests: Test suite
+- config: Configuration
+- services: Service implementations  
+- providers: AI provider implementations
+- cache: Caching system
+- commands: Console commands
+
+### Examples
+
+feat(ai): add Google Gemini provider support
+fix(analyzer): resolve memory leak in code parsing
+docs(services): update service API documentation
+test(security): add security analyzer test coverage
+chore(deps): update symfony dependencies improvements
+- docs: Documentation
+- ci: CI/CD pipeline
+- tests: Test suite
+- config: Configuration
+- services: Service implementations
+- providers: AI provider implementations
+- cache: Caching system
+- commands: Console commands
+
+### Examples
+
+feat(ai): add Google Gemini provider support
+fix(analyzer): resolve memory leak in code parsing
+docs(services): update service API documentation
+test(security): add security analyzer test coverage
+chore(deps): update symfony dependenciest in contributing! This guide will help you get started with contributing to this project.
 
 ## Quick Start
 
@@ -46,7 +81,8 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 - ix: Bug fix
 - docs: Documentation changes
 - style: Code style changes
-- efactor: Code refactoring
+- 
+efactor: Code refactoring
 - perf: Performance improvements
 - 	est: Adding or updating tests
 - chore: Maintenance tasks

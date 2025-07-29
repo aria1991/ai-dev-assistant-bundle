@@ -45,37 +45,43 @@ php bin/console ai-dev-assistant:analyze src/Service/ --analyzers=performance
 php bin/console ai-dev-assistant:analyze src/ --analyzers=documentation
 ```
 
-### 4. **REST API Integration**
+### 4. **Service Integration**
 
 ```php
 // In your Symfony controller
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer;
 
 class CodeReviewController extends AbstractController
 {
+    public function __construct(
+        private CodeAnalyzer $codeAnalyzer
+    ) {}
+
     #[Route('/review', methods: ['POST'])]
-    public function review(HttpClientInterface $client, Request $request): JsonResponse
+    public function review(Request $request): JsonResponse
     {
-        $code = $request->getContent();
+        $data = json_decode($request->getContent(), true);
+        $code = $data['code'] ?? '';
         
-        $response = $client->request('POST', '/ai-dev-assistant/analyze', [
-            'json' => ['code' => $code]
-        ]);
+        $result = $this->codeAnalyzer->analyze(
+            code: $code,
+            filePath: $data['filename'] ?? 'uploaded.php'
+        );
         
-        return new JsonResponse($response->toArray());
+        return $this->json($result);
     }
 }
 ```
 
-### 5. **JavaScript Integration**
+### 5. **JavaScript Frontend Integration**
 
 ```javascript
-// Analyze code from frontend
-async function analyzeCode(code) {
-    const response = await fetch('/ai-dev-assistant/analyze', {
+// Submit code for analysis via your controller
+async function analyzeCode(code, filename) {
+    const response = await fetch('/review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
+        body: JSON.stringify({ code, filename })
     });
     
     const analysis = await response.json();
