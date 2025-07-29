@@ -207,7 +207,7 @@ final class AdvancedCacheService
 
         foreach ($weights as $component => $weight) {
             $componentSimilarity = 0.0;
-            
+
             if (\in_array($component, ['functions', 'classes', 'variables'], true)) {
                 $componentSimilarity = $this->calculateArraySimilarity(
                     $sig1[$component] ?? [],
