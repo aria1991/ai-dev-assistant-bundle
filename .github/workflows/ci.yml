@@ -49,12 +49,25 @@ jobs:
       run: |
         composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
         
+    - name: Basic Syntax Validation
+      run: |
+        echo "Checking PHP syntax of key files..."
+        php validate-syntax.php
+        
+    - name: Verify Tools Installation
+      run: |
+        echo "Checking installed tools..."
+        if [ -f vendor/bin/php-cs-fixer ]; then echo "✓ PHP CS Fixer found"; else echo "✗ PHP CS Fixer missing"; fi
+        if [ -f vendor/bin/phpstan ]; then echo "✓ PHPStan found"; else echo "✗ PHPStan missing"; fi
+        if [ -f vendor/bin/phpunit ]; then echo "✓ PHPUnit found"; else echo "✗ PHPUnit missing"; fi
+        
     - name: Code Style Check (PHP CS Fixer)
       run: |
         if [ -f vendor/bin/php-cs-fixer ]; then
           vendor/bin/php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.dist.php
         else
-          echo "PHP CS Fixer not found, skipping..."
+          echo "PHP CS Fixer not found, cannot check code style"
+          exit 1
         fi
       
     - name: Static Analysis (PHPStan)
@@ -62,7 +75,8 @@ jobs:
         if [ -f vendor/bin/phpstan ]; then
           vendor/bin/phpstan analyse --memory-limit=1G --no-progress
         else
-          echo "PHPStan not found, skipping..."
+          echo "PHPStan not found, cannot run static analysis"
+          exit 1
         fi
       
     - name: Unit Tests (PHPUnit)
@@ -70,7 +84,8 @@ jobs:
         if [ -f vendor/bin/phpunit ]; then
           vendor/bin/phpunit --colors=always --verbose
         else
-          echo "PHPUnit not found, skipping..."
+          echo "PHPUnit not found, cannot run tests"
+          exit 1
         fi
 
   security-analysis:
@@ -151,11 +166,19 @@ jobs:
         
     - name: Bundle Integration Test
       run: |
+        echo "Testing bundle integration with PHP ${{ matrix.php-version }} and Symfony ${{ matrix.symfony-version }}"
         php -r "
-        require 'vendor/autoload.php';
-        use Aria1991\AIDevAssistantBundle\AIDevAssistantBundle;
-        \$bundle = new AIDevAssistantBundle();
-        echo 'Bundle instantiated successfully with PHP ' . PHP_VERSION . ' and Symfony ${{ matrix.symfony-version }}: ' . get_class(\$bundle) . PHP_EOL;
+        try {
+            require 'vendor/autoload.php';
+            use Aria1991\AIDevAssistantBundle\AIDevAssistantBundle;
+            \$bundle = new AIDevAssistantBundle();
+            echo 'Bundle instantiated successfully with PHP ' . PHP_VERSION . ' and Symfony ${{ matrix.symfony-version }}: ' . get_class(\$bundle) . PHP_EOL;
+            echo 'Bundle extension: ' . get_class(\$bundle->getContainerExtension()) . PHP_EOL;
+        } catch (\Throwable \$e) {
+            echo 'ERROR: ' . \$e->getMessage() . PHP_EOL;
+            echo 'Stack trace: ' . \$e->getTraceAsString() . PHP_EOL;
+            exit(1);
+        }
         "
 
   success:

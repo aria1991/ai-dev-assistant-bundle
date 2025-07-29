@@ -93,3 +93,24 @@ services:
             $projectDir: '%kernel.project_dir%'
         tags:
             - { name: 'console.command' }
+
+    # Health Check Command (v1.2+)
+    Aria1991\AIDevAssistantBundle\Command\HealthCheckCommand:
+        tags:
+            - { name: 'console.command' }
+
+    # Advanced Cache Service (v1.3+)
+    Aria1991\AIDevAssistantBundle\Service\AdvancedCacheService:
+        arguments:
+            $cache: '@cache.app'
+            $logger: '@logger'
+        tags:
+            - { name: 'monolog.logger', channel: 'ai_dev_assistant' }
+
+    # WebProfiler Data Collector (v1.4+) - only loaded when WebProfiler is available
+    Aria1991\AIDevAssistantBundle\DataCollector\AIAnalysisDataCollector:
+        arguments:
+            $codeAnalyzer: '@Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer'
+            $aiManager: '@Aria1991\AIDevAssistantBundle\Service\AIManager'
+        tags:
+            - { name: 'data_collector', template: 'profiler/ai_analysis.html.twig', id: 'ai_analysis', priority: 300 }
