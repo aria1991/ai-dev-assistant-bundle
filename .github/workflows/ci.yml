@@ -82,7 +82,7 @@ jobs:
     - name: Unit Tests (PHPUnit)
       run: |
         if [ -f vendor/bin/phpunit ]; then
-          vendor/bin/phpunit --colors=always --verbose
+          vendor/bin/phpunit --colors=always
         else
           echo "PHPUnit not found, cannot run tests"
           exit 1
