@@ -14,6 +14,9 @@ declare(strict_types=1);
 namespace Aria1991\AIDevAssistantBundle;
 
 use Aria1991\AIDevAssistantBundle\DependencyInjection\AIDevAssistantExtension;
+use Aria1991\AIDevAssistantBundle\DependencyInjection\Compiler\AnalyzerPass;
+use Aria1991\AIDevAssistantBundle\DependencyInjection\Compiler\AIProviderPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -35,13 +38,22 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  * - Code quality analysis
  * - Documentation completeness review
  * - Multi-provider AI support (OpenAI, Anthropic, Google)
- * - REST API endpoints
  * - Caching and rate limiting
+ * - Extensible analyzer system
+ * - Event-driven architecture
  *
  * @author Aria Vahidi <aria.vahidi2020@gmail.com>
  */
 final class AIDevAssistantBundle extends Bundle
 {
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new AnalyzerPass());
+        $container->addCompilerPass(new AIProviderPass());
+    }
+
     public function getContainerExtension(): ?ExtensionInterface
     {
         return new AIDevAssistantExtension();

@@ -42,25 +42,29 @@ services:
         tags:
             - { name: 'ai_dev_assistant.provider', priority: 60 }
 
-    # AI Manager with auto-injected providers by priority
+    # AI Manager with compiler pass injection
     Aria1991\AIDevAssistantBundle\Service\AIManager:
         arguments:
-            $providers: !tagged_iterator { tag: 'ai_dev_assistant.provider', default_priority_method: 'getPriority' }
+            $providers: [] # Will be populated by AIProviderPass
 
-    # Code Analyzers with service tags
+    # Code Analyzers with service tags and priorities
     Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer:
-        tags: ['ai_dev_assistant.analyzer']
-    Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer:
-        tags: ['ai_dev_assistant.analyzer']
+        tags: 
+            - { name: 'ai_dev_assistant.analyzer', priority: 100 }
     Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer:
-        tags: ['ai_dev_assistant.analyzer']
+        tags: 
+            - { name: 'ai_dev_assistant.analyzer', priority: 90 }
+    Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer:
+        tags: 
+            - { name: 'ai_dev_assistant.analyzer', priority: 80 }
     Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer:
-        tags: ['ai_dev_assistant.analyzer']
+        tags: 
+            - { name: 'ai_dev_assistant.analyzer', priority: 70 }
 
-    # Main Code Analyzer Service with tagged analyzer auto-injection
+    # Main Code Analyzer Service with compiler pass injection
     Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer:
         arguments:
-            $analyzers: !tagged_iterator ai_dev_assistant.analyzer
+            $analyzers: [] # Will be populated by AnalyzerPass
             $cacheService: '@Aria1991\AIDevAssistantBundle\Service\CacheService'
 
     # Cache Service
