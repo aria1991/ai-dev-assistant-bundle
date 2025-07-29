@@ -24,12 +24,12 @@ namespace Aria1991\AIDevAssistantBundle\DTO;
 final readonly class AnalysisResult
 {
     /**
-     * @param string $filename        The analyzed filename
-     * @param array  $results        Results from each analyzer
-     * @param array  $metadata       Analysis metadata (timing, tokens, etc.)
-     * @param array  $errors         Any errors that occurred during analysis
-     * @param bool   $successful     Whether the analysis completed successfully
-     * @param float  $executionTime  Total execution time in seconds
+     * @param string $filename      The analyzed filename
+     * @param array  $results       Results from each analyzer
+     * @param array  $metadata      Analysis metadata (timing, tokens, etc.)
+     * @param array  $errors        Any errors that occurred during analysis
+     * @param bool   $successful    Whether the analysis completed successfully
+     * @param float  $executionTime Total execution time in seconds
      */
     public function __construct(
         public string $filename,
@@ -37,7 +37,7 @@ final readonly class AnalysisResult
         public array $metadata = [],
         public array $errors = [],
         public bool $successful = true,
-        public float $executionTime = 0.0
+        public float $executionTime = 0.0,
     ) {
     }
 
@@ -48,7 +48,7 @@ final readonly class AnalysisResult
         string $filename,
         array $results,
         array $metadata = [],
-        float $executionTime = 0.0
+        float $executionTime = 0.0,
     ): self {
         return new self(
             $filename,
@@ -67,7 +67,7 @@ final readonly class AnalysisResult
         string $filename,
         array $errors,
         array $partialResults = [],
-        float $executionTime = 0.0
+        float $executionTime = 0.0,
     ): self {
         return new self(
             $filename,
@@ -112,10 +112,11 @@ final readonly class AnalysisResult
     {
         $total = 0;
         foreach ($this->results as $result) {
-            if (isset($result['issues']) && is_array($result['issues'])) {
-                $total += count($result['issues']);
+            if (isset($result['issues']) && \is_array($result['issues'])) {
+                $total += \count($result['issues']);
             }
         }
+
         return $total;
     }
 
@@ -126,7 +127,7 @@ final readonly class AnalysisResult
     {
         $issues = [];
         foreach ($this->results as $analyzerName => $result) {
-            if (isset($result['issues']) && is_array($result['issues'])) {
+            if (isset($result['issues']) && \is_array($result['issues'])) {
                 foreach ($result['issues'] as $issue) {
                     if (($issue['severity'] ?? '') === $severity) {
                         $issue['analyzer'] = $analyzerName;
@@ -135,6 +136,7 @@ final readonly class AnalysisResult
                 }
             }
         }
+
         return $issues;
     }
 
@@ -216,9 +218,9 @@ final readonly class AnalysisResult
             'errors' => $this->errors,
             'summary' => [
                 'total_issues' => $this->getTotalIssuesCount(),
-                'critical_issues' => count($this->getCriticalIssues()),
-                'warning_issues' => count($this->getWarningIssues()),
-                'info_issues' => count($this->getInfoIssues()),
+                'critical_issues' => \count($this->getCriticalIssues()),
+                'warning_issues' => \count($this->getWarningIssues()),
+                'info_issues' => \count($this->getInfoIssues()),
                 'analyzers_used' => $this->getAnalyzerNames(),
                 'cached' => $this->wasCached(),
                 'ai_provider' => $this->getAIProvider(),

@@ -38,7 +38,7 @@ final class HealthCheckCommand extends Command
     public function __construct(
         private readonly AIManager $aiManager,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly iterable $providers
+        private readonly iterable $providers,
     ) {
         parent::__construct();
     }
@@ -65,17 +65,19 @@ final class HealthCheckCommand extends Command
         // Final status
         if ($overallHealth) {
             $io->success('All health checks passed. Bundle is ready for use.');
+
             return Command::SUCCESS;
         }
 
         $io->error('Some health checks failed. Please review the issues above.');
+
         return Command::FAILURE;
     }
 
     private function checkConfiguration(SymfonyStyle $io): bool
     {
         $io->section('Configuration Check');
-        
+
         $config = [
             'ai' => [
                 'providers' => [
@@ -100,7 +102,7 @@ final class HealthCheckCommand extends Command
         ];
 
         $validation = ConfigurationHelper::validateConfiguration($config);
-        
+
         $table = new Table($output);
         $table->setHeaders(['Check', 'Status', 'Details']);
 
@@ -127,7 +129,7 @@ final class HealthCheckCommand extends Command
     private function checkProviders(SymfonyStyle $io): bool
     {
         $io->section('AI Providers Check');
-        
+
         $table = new Table($output);
         $table->setHeaders(['Provider', 'Status', 'Details']);
 
@@ -139,7 +141,7 @@ final class HealthCheckCommand extends Command
             }
 
             $providerName = $this->getProviderName($provider);
-            
+
             try {
                 if ($provider->isAvailable()) {
                     $table->addRow([$providerName, '✅ AVAILABLE', 'Ready for requests']);
@@ -164,42 +166,42 @@ final class HealthCheckCommand extends Command
     private function checkSystemRequirements(SymfonyStyle $io): bool
     {
         $io->section('System Requirements Check');
-        
+
         $table = new Table($output);
         $table->setHeaders(['Requirement', 'Status', 'Details']);
 
         $allPassed = true;
 
         // PHP version
-        $phpVersion = PHP_VERSION;
+        $phpVersion = \PHP_VERSION;
         $minPhpVersion = '8.2.0';
         $phpOk = version_compare($phpVersion, $minPhpVersion, '>=');
         $table->addRow([
             'PHP Version',
             $phpOk ? '✅ PASS' : '❌ FAIL',
-            "Current: {$phpVersion}, Required: >= {$minPhpVersion}"
+            "Current: {$phpVersion}, Required: >= {$minPhpVersion}",
         ]);
         $allPassed = $allPassed && $phpOk;
 
         // Required extensions
         $requiredExtensions = ['json', 'curl', 'mbstring'];
         foreach ($requiredExtensions as $extension) {
-            $loaded = extension_loaded($extension);
+            $loaded = \extension_loaded($extension);
             $table->addRow([
                 "Extension: {$extension}",
                 $loaded ? '✅ PASS' : '❌ FAIL',
-                $loaded ? 'Loaded' : 'Not loaded'
+                $loaded ? 'Loaded' : 'Not loaded',
             ]);
             $allPassed = $allPassed && $loaded;
         }
 
         // Memory limit
-        $memoryLimit = ini_get('memory_limit');
+        $memoryLimit = \ini_get('memory_limit');
         $memoryOk = $memoryLimit === '-1' || $this->parseMemoryLimit($memoryLimit) >= 256 * 1024 * 1024;
         $table->addRow([
             'Memory Limit',
             $memoryOk ? '✅ PASS' : '⚠️  WARN',
-            "Current: {$memoryLimit}, Recommended: >= 256M"
+            "Current: {$memoryLimit}, Recommended: >= 256M",
         ]);
 
         $table->render();
@@ -209,14 +211,15 @@ final class HealthCheckCommand extends Command
 
     private function getProviderName(AIProviderInterface $provider): string
     {
-        $className = get_class($provider);
+        $className = $provider::class;
+
         return str_replace(['Provider', 'Aria1991\\AIDevAssistantBundle\\Service\\Provider\\'], '', $className);
     }
 
     private function parseMemoryLimit(string $limit): int
     {
         $limit = trim($limit);
-        $lastChar = strtolower($limit[strlen($limit) - 1]);
+        $lastChar = strtolower($limit[\strlen($limit) - 1]);
         $number = (int) substr($limit, 0, -1);
 
         return match ($lastChar) {

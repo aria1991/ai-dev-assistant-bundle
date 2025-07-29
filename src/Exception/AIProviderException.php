@@ -26,7 +26,7 @@ final class AIProviderException extends AIDevAssistantException
         public readonly int $statusCode = 0,
         public readonly bool $isRetryable = false,
         ?\Throwable $previous = null,
-        array $context = []
+        array $context = [],
     ) {
         $context['provider'] = $this->providerName;
         $context['status_code'] = $this->statusCode;
@@ -41,7 +41,7 @@ final class AIProviderException extends AIDevAssistantException
     public static function rateLimitExceeded(
         string $providerName,
         int $retryAfter = 0,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         $message = "Rate limit exceeded for provider '{$providerName}'";
         if ($retryAfter > 0) {
@@ -63,7 +63,7 @@ final class AIProviderException extends AIDevAssistantException
      */
     public static function authenticationFailed(
         string $providerName,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         return new self(
             "Authentication failed for provider '{$providerName}'. Check your API key.",
@@ -79,7 +79,7 @@ final class AIProviderException extends AIDevAssistantException
      */
     public static function quotaExceeded(
         string $providerName,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         return new self(
             "API quota exceeded for provider '{$providerName}'",
@@ -95,7 +95,7 @@ final class AIProviderException extends AIDevAssistantException
      */
     public static function networkError(
         string $providerName,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         return new self(
             "Network error connecting to provider '{$providerName}'",
@@ -112,7 +112,7 @@ final class AIProviderException extends AIDevAssistantException
     public static function invalidResponse(
         string $providerName,
         string $reason,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         return new self(
             "Invalid response from provider '{$providerName}': {$reason}",

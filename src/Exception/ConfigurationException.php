@@ -25,7 +25,7 @@ final class ConfigurationException extends AIDevAssistantException
         public readonly string $configKey = '',
         public readonly mixed $configValue = null,
         ?\Throwable $previous = null,
-        array $context = []
+        array $context = [],
     ) {
         $context['config_key'] = $this->configKey;
         $context['config_value'] = $this->configValue;

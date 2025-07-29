@@ -29,7 +29,7 @@ final class PostAnalysisEvent extends Event
         private readonly string $filename,
         private readonly string $code,
         private array $results = [],
-        private array $metadata = []
+        private array $metadata = [],
     ) {
     }
 

@@ -21,16 +21,16 @@ namespace Aria1991\AIDevAssistantBundle\Exception;
 abstract class AIDevAssistantException extends \Exception
 {
     /**
-     * @param string          $message   Exception message
-     * @param int             $code      Exception code
-     * @param \Throwable|null $previous  Previous exception
-     * @param array           $context   Additional context data
+     * @param string          $message  Exception message
+     * @param int             $code     Exception code
+     * @param \Throwable|null $previous Previous exception
+     * @param array           $context  Additional context data
      */
     public function __construct(
         string $message = '',
         int $code = 0,
         ?\Throwable $previous = null,
-        protected array $context = []
+        protected array $context = [],
     ) {
         parent::__construct($message, $code, $previous);
     }

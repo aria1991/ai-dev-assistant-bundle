@@ -24,13 +24,13 @@ namespace Aria1991\AIDevAssistantBundle\DTO;
 final readonly class AnalysisRequest
 {
     /**
-     * @param string   $code              The source code to analyze
-     * @param string   $filename          The filename (optional, for context)
-     * @param string[] $enabledAnalyzers  List of analyzer names to use
-     * @param array    $options           Additional analysis options
-     * @param int      $maxTokens         Maximum tokens for AI requests
-     * @param bool     $useCache          Whether to use cached results
-     * @param int      $timeout           Request timeout in seconds
+     * @param string   $code             The source code to analyze
+     * @param string   $filename         The filename (optional, for context)
+     * @param string[] $enabledAnalyzers List of analyzer names to use
+     * @param array    $options          Additional analysis options
+     * @param int      $maxTokens        Maximum tokens for AI requests
+     * @param bool     $useCache         Whether to use cached results
+     * @param int      $timeout          Request timeout in seconds
      */
     public function __construct(
         public string $code,
@@ -39,7 +39,7 @@ final readonly class AnalysisRequest
         public array $options = [],
         public int $maxTokens = 4000,
         public bool $useCache = true,
-        public int $timeout = 30
+        public int $timeout = 30,
     ) {
         $this->validate();
     }
@@ -117,7 +117,7 @@ final readonly class AnalysisRequest
      */
     public function getFileExtension(): string
     {
-        return pathinfo($this->filename, PATHINFO_EXTENSION);
+        return pathinfo($this->filename, \PATHINFO_EXTENSION);
     }
 
     /**
@@ -125,7 +125,7 @@ final readonly class AnalysisRequest
      */
     public function hasAnalyzer(string $analyzer): bool
     {
-        return in_array($analyzer, $this->enabledAnalyzers, true);
+        return \in_array($analyzer, $this->enabledAnalyzers, true);
     }
 
     /**
@@ -156,7 +156,7 @@ final readonly class AnalysisRequest
         }
 
         foreach ($this->enabledAnalyzers as $analyzer) {
-            if (!is_string($analyzer) || empty($analyzer)) {
+            if (!\is_string($analyzer) || empty($analyzer)) {
                 throw new \InvalidArgumentException('All analyzer names must be non-empty strings');
             }
         }

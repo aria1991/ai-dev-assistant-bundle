@@ -25,7 +25,7 @@ final class AnalysisException extends AIDevAssistantException
         public readonly string $filename = '',
         public readonly string $analyzerName = '',
         ?\Throwable $previous = null,
-        array $context = []
+        array $context = [],
     ) {
         $context['filename'] = $this->filename;
         $context['analyzer'] = $this->analyzerName;
@@ -80,7 +80,7 @@ final class AnalysisException extends AIDevAssistantException
     public static function analyzerFailed(
         string $analyzerName,
         string $filename,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ): self {
         return new self(
             "Analyzer '{$analyzerName}' failed to analyze file '{$filename}'",

@@ -3,7 +3,12 @@
 declare(strict_types=1);
 
 /*
- * Simple syntax validation script for CI debugging.
+ * This file is part of the AI Development Assistant Bundle.
+ *
+ * (c) Aria Vahidi <aria.vahidi2020@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 $files = [
@@ -30,11 +35,11 @@ foreach ($files as $file) {
         $errors[] = "File not found: $file";
         continue;
     }
-    
+
     $output = [];
     $returnVar = 0;
     exec("php -l \"$file\" 2>&1", $output, $returnVar);
-    
+
     if ($returnVar !== 0) {
         $errors[] = "Syntax error in $file: " . implode("\n", $output);
     } else {

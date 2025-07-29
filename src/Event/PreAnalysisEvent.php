@@ -29,7 +29,7 @@ final class PreAnalysisEvent extends Event
         private readonly string $filename,
         private readonly string $code,
         private array $enabledAnalyzers = [],
-        private array $options = []
+        private array $options = [],
     ) {
     }
 
@@ -55,7 +55,7 @@ final class PreAnalysisEvent extends Event
 
     public function addAnalyzer(string $analyzer): void
     {
-        if (!in_array($analyzer, $this->enabledAnalyzers, true)) {
+        if (!\in_array($analyzer, $this->enabledAnalyzers, true)) {
             $this->enabledAnalyzers[] = $analyzer;
         }
     }
@@ -63,7 +63,7 @@ final class PreAnalysisEvent extends Event
     public function removeAnalyzer(string $analyzer): void
     {
         $this->enabledAnalyzers = array_values(
-            array_filter($this->enabledAnalyzers, fn($a) => $a !== $analyzer)
+            array_filter($this->enabledAnalyzers, fn ($a) => $a !== $analyzer)
         );
     }
 

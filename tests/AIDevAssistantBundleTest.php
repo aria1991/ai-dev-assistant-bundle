@@ -47,7 +47,7 @@ class AIDevAssistantBundleTest extends TestCase
 
         // Verify compiler passes were added
         $passes = $container->getCompilerPassConfig()->getPasses();
-        
+
         // We should have at least 2 passes added (AnalyzerPass and AIProviderPass)
         // Since we can't easily inspect the specific passes, we just ensure build() worked
         $this->assertIsArray($passes);
@@ -56,7 +56,7 @@ class AIDevAssistantBundleTest extends TestCase
     public function testBundleNamespace(): void
     {
         $bundle = new AIDevAssistantBundle();
-        
+
         // Check that the bundle has the correct namespace
         $reflection = new \ReflectionClass($bundle);
         $this->assertSame('Aria1991\AIDevAssistantBundle', $reflection->getNamespaceName());

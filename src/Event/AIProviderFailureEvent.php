@@ -30,7 +30,7 @@ final class AIProviderFailureEvent extends Event
         private readonly string $prompt,
         private readonly \Throwable $exception,
         private readonly array $options = [],
-        private bool $shouldRetry = false
+        private bool $shouldRetry = false,
     ) {
     }
 

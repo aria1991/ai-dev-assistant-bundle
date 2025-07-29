@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Aria1991\AIDevAssistantBundle;
 
 use Aria1991\AIDevAssistantBundle\DependencyInjection\AIDevAssistantExtension;
-use Aria1991\AIDevAssistantBundle\DependencyInjection\Compiler\AnalyzerPass;
 use Aria1991\AIDevAssistantBundle\DependencyInjection\Compiler\AIProviderPass;
+use Aria1991\AIDevAssistantBundle\DependencyInjection\Compiler\AnalyzerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

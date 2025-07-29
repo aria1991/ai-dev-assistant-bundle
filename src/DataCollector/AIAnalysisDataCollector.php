@@ -28,7 +28,7 @@ final class AIAnalysisDataCollector extends AbstractDataCollector
 {
     public function __construct(
         private readonly ?AdvancedCacheService $cacheService = null,
-        private readonly ?AIManager $aiManager = null
+        private readonly ?AIManager $aiManager = null,
     ) {
     }
 

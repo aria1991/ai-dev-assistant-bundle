@@ -34,7 +34,7 @@ final class AdvancedCacheService
         private readonly LoggerInterface $logger,
         private readonly bool $enabled = true,
         private readonly int $ttl = 3600,
-        private readonly float $semanticThreshold = 0.85
+        private readonly float $semanticThreshold = 0.85,
     ) {
     }
 
@@ -51,23 +51,26 @@ final class AdvancedCacheService
         $item = $this->cache->getItem($primaryKey);
 
         if ($item->isHit()) {
-            $this->metrics['hits']++;
+            ++$this->metrics['hits'];
             $this->logger->debug('Cache hit for analysis', ['key' => $primaryKey]);
+
             return $item->get();
         }
 
         // Try semantic similarity search
         $semanticResult = $this->findSimilarCachedResult($code, $analyzer);
         if ($semanticResult !== null) {
-            $this->metrics['semantic_hits']++;
+            ++$this->metrics['semantic_hits'];
             $this->logger->debug('Semantic cache hit for analysis', ['similarity' => $semanticResult['similarity']]);
-            
+
             // Store exact match for future use
             $this->storeAnalysisResult($code, $analyzer, $semanticResult['result']);
+
             return $semanticResult['result'];
         }
 
-        $this->metrics['misses']++;
+        ++$this->metrics['misses'];
+
         return null;
     }
 
@@ -82,7 +85,7 @@ final class AdvancedCacheService
 
         $key = $this->generateCacheKey($code, $analyzer);
         $item = $this->cache->getItem($key);
-        
+
         $cacheData = [
             'result' => $result,
             'metadata' => [
@@ -95,7 +98,7 @@ final class AdvancedCacheService
 
         $item->set($cacheData);
         $item->expiresAfter($this->ttl);
-        
+
         $this->cache->save($item);
         $this->logger->debug('Cached analysis result', ['key' => $key]);
     }
@@ -107,7 +110,7 @@ final class AdvancedCacheService
     {
         $codeSignature = $this->extractCodeSignature($code);
         $searchPattern = "cache_analysis_{$analyzer}_*";
-        
+
         // This is a simplified implementation
         // In production, you'd use a more sophisticated similarity search
         foreach ($this->getAllCacheKeys($searchPattern) as $key) {
@@ -143,6 +146,7 @@ final class AdvancedCacheService
     private function generateCacheKey(string $code, string $analyzer): string
     {
         $hash = $this->generateCodeHash($code);
+
         return "cache_analysis_{$analyzer}_{$hash}";
     }
 
@@ -154,6 +158,7 @@ final class AdvancedCacheService
         // Normalize code by removing comments and whitespace variations
         $normalized = preg_replace('/\/\*[\s\S]*?\*\/|\/\/.*$/m', '', $code);
         $normalized = preg_replace('/\s+/', ' ', $normalized);
+
         return hash('sha256', trim($normalized));
     }
 
@@ -174,12 +179,12 @@ final class AdvancedCacheService
 
         // Extract variable names
         preg_match_all('/\$(\w+)/i', $code, $variables);
-        $signature['variables'] = array_unique(array_slice($variables[1] ?? [], 0, 20)); // Limit to avoid huge arrays
+        $signature['variables'] = array_unique(\array_slice($variables[1] ?? [], 0, 20)); // Limit to avoid huge arrays
 
         // Code metrics
         $signature['metrics'] = [
             'lines' => substr_count($code, "\n") + 1,
-            'chars' => strlen($code),
+            'chars' => \strlen($code),
             'complexity_estimate' => substr_count($code, 'if') + substr_count($code, 'for') + substr_count($code, 'while'),
         ];
 
@@ -232,8 +237,8 @@ final class AdvancedCacheService
             return 0.0;
         }
 
-        $intersection = count(array_intersect($arr1, $arr2));
-        $union = count(array_unique(array_merge($arr1, $arr2)));
+        $intersection = \count(array_intersect($arr1, $arr2));
+        $union = \count(array_unique(array_merge($arr1, $arr2)));
 
         return $union > 0 ? $intersection / $union : 0.0;
     }
@@ -254,13 +259,13 @@ final class AdvancedCacheService
             if (isset($metrics1[$metric]) && isset($metrics2[$metric])) {
                 $val1 = $metrics1[$metric];
                 $val2 = $metrics2[$metric];
-                
+
                 if ($val1 == 0 && $val2 == 0) {
                     $similarity += 1.0;
                 } elseif ($val1 > 0 && $val2 > 0) {
                     $similarity += 1.0 - abs($val1 - $val2) / max($val1, $val2);
                 }
-                $count++;
+                ++$count;
             }
         }
 
