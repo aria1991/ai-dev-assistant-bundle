@@ -4,19 +4,26 @@ services:
         autoconfigure: true
         public: false
 
+    # Service aliases for better developer experience
+    ai_dev_assistant.code_analyzer: '@Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer'
+    ai_dev_assistant.ai_manager: '@Aria1991\AIDevAssistantBundle\Service\AIManager'
+    ai_dev_assistant.cache: '@Aria1991\AIDevAssistantBundle\Service\CacheService'
+
     Aria1991\AIDevAssistantBundle\:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
             - '../src/AIDevAssistantBundle.php'
 
-    # AI Providers with proper conditional configuration
+    # AI Providers with priority tags for ordered fallback
     Aria1991\AIDevAssistantBundle\Service\Provider\OpenAIProvider:
         arguments:
             $httpClient: '@http_client'
             $apiKey: '%env(default::OPENAI_API_KEY)%'
             $model: '%ai_dev_assistant.ai.providers.openai.model%'
             $maxTokens: '%ai_dev_assistant.ai.providers.openai.max_tokens%'
+        tags:
+            - { name: 'ai_dev_assistant.provider', priority: 100 }
 
     Aria1991\AIDevAssistantBundle\Service\Provider\AnthropicProvider:
         arguments:
@@ -24,35 +31,36 @@ services:
             $apiKey: '%env(default::ANTHROPIC_API_KEY)%'
             $model: '%ai_dev_assistant.ai.providers.anthropic.model%'
             $maxTokens: '%ai_dev_assistant.ai.providers.anthropic.max_tokens%'
+        tags:
+            - { name: 'ai_dev_assistant.provider', priority: 80 }
 
     Aria1991\AIDevAssistantBundle\Service\Provider\GoogleProvider:
         arguments:
             $httpClient: '@http_client'
             $apiKey: '%env(default::GOOGLE_AI_API_KEY)%'
             $model: '%ai_dev_assistant.ai.providers.google.model%'
+        tags:
+            - { name: 'ai_dev_assistant.provider', priority: 60 }
 
-    # AI Manager with provider fallback chain
+    # AI Manager with auto-injected providers by priority
     Aria1991\AIDevAssistantBundle\Service\AIManager:
         arguments:
-            $providers:
-                - '@Aria1991\AIDevAssistantBundle\Service\Provider\OpenAIProvider'
-                - '@Aria1991\AIDevAssistantBundle\Service\Provider\AnthropicProvider'
-                - '@Aria1991\AIDevAssistantBundle\Service\Provider\GoogleProvider'
+            $providers: !tagged_iterator { tag: 'ai_dev_assistant.provider', default_priority_method: 'getPriority' }
 
-    # Code Analyzers
-    Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer: ~
-    Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer: ~
-    Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer: ~
-    Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer: ~
+    # Code Analyzers with service tags
+    Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer:
+        tags: ['ai_dev_assistant.analyzer']
+    Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer:
+        tags: ['ai_dev_assistant.analyzer']
+    Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer:
+        tags: ['ai_dev_assistant.analyzer']
+    Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer:
+        tags: ['ai_dev_assistant.analyzer']
 
-    # Main Code Analyzer Service
+    # Main Code Analyzer Service with tagged analyzer auto-injection
     Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer:
         arguments:
-            $analyzers:
-                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer'
-                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer'
-                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer'
-                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer'
+            $analyzers: !tagged_iterator ai_dev_assistant.analyzer
             $cacheService: '@Aria1991\AIDevAssistantBundle\Service\CacheService'
 
     # Cache Service
@@ -61,41 +69,6 @@ services:
             $cache: '@cache.app'
             $ttl: '%ai_dev_assistant.cache.ttl%'
             $enabled: '%ai_dev_assistant.cache.enabled%'
-
-    # Rate Limiter
-    Aria1991\AIDevAssistantBundle\Service\RateLimiter:
-        arguments:
-            $cache: '@cache.app'
-
-    # Commands
-    Aria1991\AIDevAssistantBundle\Command\AnalyzeCodeCommand:
-        tags:
-            - { name: 'console.command' }
-
-    Aria1991\AIDevAssistantBundle\Command\ConfigTestCommand:
-        tags:
-            - { name: 'console.command' }
-
-    Aria1991\AIDevAssistantBundle\Command\InstallCommand:
-        tags:
-            - { name: 'console.command' }
-    Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer: ~
-
-    # Main Code Analyzer
-    Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer:
-        arguments:
-            $analyzers:
-                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer'
-                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer'
-                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer'
-                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer'
-
-    # Cache Service
-    Aria1991\AIDevAssistantBundle\Service\CacheService:
-        arguments:
-            $cache: '@cache.app'
-            $enabled: '%ai_dev_assistant.cache_enabled%'
-            $ttl: '%ai_dev_assistant.cache_ttl%'
 
     # Rate Limiter
     Aria1991\AIDevAssistantBundle\Service\RateLimiter:
