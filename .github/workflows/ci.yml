@@ -50,9 +50,7 @@ jobs:
     - name: Install Dependencies
       run: |
         composer require symfony/framework-bundle:${{ matrix.symfony-version }} --no-update --no-scripts
-        composer remove symfony/phpunit-bridge --dev --no-update --ignore-platform-reqs || true
-        composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader --ignore-platform-reqs
-        rm -rf vendor/symfony/phpunit-bridge || true
+        composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader
         
     - name: Code Style Check (PHP CS Fixer)
       run: vendor/bin/php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.dist.php
