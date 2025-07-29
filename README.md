@@ -42,9 +42,9 @@ php bin/console ai-dev-assistant:analyze src/
 ### 🏗️ **Enterprise Architecture (v1.1+)**
 - **Event-Driven**: Extensible with PreAnalysisEvent, PostAnalysisEvent
 - **Type-Safe DTOs**: AnalysisRequest/AnalysisResult for better API contracts
-- **Auto-Discovery**: Compiler passes for automatic service registration
 - **Exception Hierarchy**: Professional error handling with rich context
 - **Health Monitoring**: Real-time bundle and provider status checking
+- **Extensible Design**: Custom analyzers and providers support
 
 ### 🚄 **Performance & Caching (v1.3+)**
 - **Semantic Caching**: Intelligent reuse of similar code analysis
