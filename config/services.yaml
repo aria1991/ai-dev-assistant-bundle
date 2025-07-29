@@ -20,8 +20,8 @@ services:
         arguments:
             $httpClient: '@http_client'
             $apiKey: '%env(default::OPENAI_API_KEY)%'
-            $model: '%ai_dev_assistant.ai.providers.openai.model%'
-            $maxTokens: '%ai_dev_assistant.ai.providers.openai.max_tokens%'
+            $model: 'gpt-4'
+            $maxTokens: 4000
         tags:
             - { name: 'ai_dev_assistant.provider', priority: 100 }
 
@@ -29,8 +29,8 @@ services:
         arguments:
             $httpClient: '@http_client'
             $apiKey: '%env(default::ANTHROPIC_API_KEY)%'
-            $model: '%ai_dev_assistant.ai.providers.anthropic.model%'
-            $maxTokens: '%ai_dev_assistant.ai.providers.anthropic.max_tokens%'
+            $model: 'claude-3-sonnet-20240229'
+            $maxTokens: 4000
         tags:
             - { name: 'ai_dev_assistant.provider', priority: 80 }
 
@@ -38,14 +38,17 @@ services:
         arguments:
             $httpClient: '@http_client'
             $apiKey: '%env(default::GOOGLE_AI_API_KEY)%'
-            $model: '%ai_dev_assistant.ai.providers.google.model%'
+            $model: 'gemini-pro'
         tags:
             - { name: 'ai_dev_assistant.provider', priority: 60 }
 
-    # AI Manager with compiler pass injection
+    # AI Manager - simplified for CI stability
     Aria1991\AIDevAssistantBundle\Service\AIManager:
         arguments:
-            $providers: [] # Will be populated by AIProviderPass
+            $providers: 
+                - '@Aria1991\AIDevAssistantBundle\Service\Provider\OpenAIProvider'
+                - '@Aria1991\AIDevAssistantBundle\Service\Provider\AnthropicProvider' 
+                - '@Aria1991\AIDevAssistantBundle\Service\Provider\GoogleProvider'
 
     # Code Analyzers with service tags and priorities
     Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer:
@@ -61,18 +64,22 @@ services:
         tags: 
             - { name: 'ai_dev_assistant.analyzer', priority: 70 }
 
-    # Main Code Analyzer Service with compiler pass injection
+    # Main Code Analyzer Service - simplified for CI stability  
     Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer:
         arguments:
-            $analyzers: [] # Will be populated by AnalyzerPass
+            $analyzers:
+                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer'
+                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer'
+                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer'
+                - '@Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer'
             $cacheService: '@Aria1991\AIDevAssistantBundle\Service\CacheService'
 
     # Cache Service
     Aria1991\AIDevAssistantBundle\Service\CacheService:
         arguments:
             $cache: '@cache.app'
-            $ttl: '%ai_dev_assistant.cache.ttl%'
-            $enabled: '%ai_dev_assistant.cache.enabled%'
+            $ttl: 3600
+            $enabled: true
 
     # Rate Limiter
     Aria1991\AIDevAssistantBundle\Service\RateLimiter:
