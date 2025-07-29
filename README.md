@@ -4,6 +4,8 @@
 [![Total Downloads](https://poser.pugx.org/aria1991/ai-dev-assistant-bundle/downloads)](https://packagist.org/packages/aria1991/ai-dev-assistant-bundle)
 [![License](https://poser.pugx.org/aria1991/ai-dev-assistant-bundle/license)](https://packagist.org/packages/aria1991/ai-dev-assistant-bundle)
 [![CI Pipeline](https://github.com/aria1991/ai-dev-assistant-bundle/workflows/CI%20Pipeline/badge.svg)](https://github.com/aria1991/ai-dev-assistant-bundle/actions)
+[![PHP Version](https://poser.pugx.org/aria1991/ai-dev-assistant-bundle/require/php)](https://packagist.org/packages/aria1991/ai-dev-assistant-bundle)
+[![Symfony Version](https://img.shields.io/badge/Symfony-6.4%20%7C%207.0-blue.svg)](https://symfony.com/)
 
 A professional-grade Symfony bundle that provides **AI-powered code analysis** with **enterprise-grade architecture**. Get intelligent insights about your code quality, security vulnerabilities, performance bottlenecks, and documentation completeness.
 
