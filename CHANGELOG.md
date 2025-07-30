@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.4.3] - 2025-07-30
+
+### Fixed
+- Corrected branch-alias in composer.json from 'dev-main' to 'dev-master'
+- Fixed Packagist version display for better semantic versioning
+- Updated development branch alias to 1.5-dev for future releases
+
+## [v1.4.2] - 2025-07-30
+
+### Fixed
+- Added missing 'contents: write' permission to release workflow
+- Updated to modern softprops/action-gh-release@v1 action
+- Fixed "Resource not accessible by integration" error in GitHub Actions
+
+## [v1.4.1] - 2025-07-30
+
+### Fixed
+- Removed incorrect REST API documentation from QUICK_START.md
+- Updated service integration examples with proper dependency injection
+- Corrected bundle capabilities description (console commands + services, not REST API)
+
+### Changed
+- Updated documentation to accurately reflect bundle architecture
+
+## [v1.4.0] - 2025-07-29
+
 ### Fixed
 - CI/CD pipeline compatibility with PHP 8.2-8.4 and Symfony 6.4+/7.0+
 - PHPUnit configuration updated for v10+ compatibility  

@@ -12,7 +12,7 @@ A professional-grade Symfony bundle that provides **AI-powered code analysis** w
 ## 🚀 5-Minute Quick Start
 
 ```bash
-# 1. Install (latest stable: v1.4.0)
+# 1. Install (latest stable: v1.4.3)
 composer require aria1991/ai-dev-assistant-bundle
 
 # 2. Auto-configure everything
@@ -489,12 +489,15 @@ vendor/bin/php-cs-fixer fix --dry-run
 
 This project follows [Semantic Versioning](https://semver.org/) (SemVer):
 
-- **Current Version**: `v1.4.0` - Latest stable release with WebProfiler integration and advanced caching
+- **Current Version**: `v1.4.3` - Latest stable release with documentation fixes and improved CI/CD
 - **Packagist**: Auto-updates on new tags via webhook
 - **Release Strategy**: See [TAGGING_STRATEGY.md](TAGGING_STRATEGY.md)
 
 ### Recent Release History
 
+- **v1.4.3** - Documentation fixes, CI/CD improvements, Packagist optimization
+- **v1.4.2** - Release workflow fixes and GitHub Actions improvements  
+- **v1.4.1** - Documentation accuracy updates and REST API reference corrections
 - **v1.4.0** - WebProfiler integration, advanced caching, improved developer experience
 - **v1.3.0** - Semantic caching system and performance optimizations  
 - **v1.2.0** - Health monitoring and comprehensive diagnostics

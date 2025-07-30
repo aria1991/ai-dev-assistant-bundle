@@ -1,6 +1,16 @@
 # GitHub Tagging Best Practices
 
 ## Current Version
+- **v1.4.3** - Latest stable release with documentation fixes and Packagist optimization (July 30, 2025)
+
+## Version History
+- **v1.4.3** - Documentation fixes and Packagist optimization (July 30, 2025)
+- **v1.4.2** - CI/CD workflow improvements (July 30, 2025)  
+- **v1.4.1** - Documentation accuracy updates (July 30, 2025)
+- **v1.4.0** - WebProfiler integration and advanced features (July 29, 2025)
+- **v1.3.0** - Semantic caching and performance (July 29, 2025)
+- **v1.2.0** - Health monitoring features (July 29, 2025)
+- **v1.1.0** - Event system and enterprise patterns (July 28, 2025)
 - **v1.0.0** - Initial stable release (July 28, 2025)
 
 ## Semantic Versioning Strategy
