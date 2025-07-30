@@ -493,16 +493,6 @@ This project follows [Semantic Versioning](https://semver.org/) (SemVer):
 - **Packagist**: Auto-updates on new tags via webhook
 - **Release Strategy**: See [TAGGING_STRATEGY.md](TAGGING_STRATEGY.md)
 
-### Recent Release History
-
-- **v1.4.3** - Documentation fixes, CI/CD improvements, Packagist optimization
-- **v1.4.2** - Release workflow fixes and GitHub Actions improvements  
-- **v1.4.1** - Documentation accuracy updates and REST API reference corrections
-- **v1.4.0** - WebProfiler integration, advanced caching, improved developer experience
-- **v1.3.0** - Semantic caching system and performance optimizations  
-- **v1.2.0** - Health monitoring and comprehensive diagnostics
-- **v1.1.0** - Event system, DTOs, and enterprise architecture patterns
-
 ### Quick Release Commands
 
 ```bash
