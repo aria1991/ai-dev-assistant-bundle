@@ -489,8 +489,8 @@ vendor/bin/php-cs-fixer fix --dry-run
 
 This project follows [Semantic Versioning](https://semver.org/) (SemVer):
 
-- **Current Version**: `v1.4.3` - Latest stable release with documentation fixes and improved CI/CD
-- **Packagist**: Auto-updates on new tags via webhook
+- **Latest Version**: See the [Latest Release](https://github.com/aria1991/ai-dev-assistant-bundle/releases/latest) on GitHub
+- **Packagist**: Auto-updates on new tags via webhook  
 - **Release Strategy**: See [TAGGING_STRATEGY.md](TAGGING_STRATEGY.md)
 
 ### Quick Release Commands
