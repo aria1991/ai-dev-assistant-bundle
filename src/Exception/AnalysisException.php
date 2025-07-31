@@ -14,103 +14,43 @@ declare(strict_types=1);
 namespace Aria1991\AIDevAssistantBundle\Exception;
 
 /**
- * Exception thrown when code analysis fails.
- *
+ * Base exception for all analysis-related errors.
+ * 
+ * This serves as the parent class for all exceptions thrown during
+ * code analysis operations.
+ * 
  * @author Aria Vahidi <aria.vahidi2020@gmail.com>
  */
-final class AnalysisException extends AIDevAssistantException
+class AnalysisException extends \Exception
 {
     public function __construct(
         string $message,
-        public readonly string $filename = '',
-        public readonly string $analyzerName = '',
-        ?\Throwable $previous = null,
-        array $context = [],
+        ?\Throwable $previous = null
     ) {
-        $context['filename'] = $this->filename;
-        $context['analyzer'] = $this->analyzerName;
-
-        parent::__construct($message, 0, $previous, $context);
+        parent::__construct($message, 0, $previous);
     }
 
     /**
-     * Create exception for file read errors.
+     * Create a generic analysis error.
      */
-    public static function fileNotReadable(string $filename, ?\Throwable $previous = null): self
+    public static function generic(string $message, ?\Throwable $previous = null): self
     {
-        return new self(
-            "Cannot read file '{$filename}' for analysis",
-            $filename,
-            '',
-            $previous
-        );
+        return new self($message, $previous);
     }
 
     /**
-     * Create exception for unsupported file types.
+     * Create an error for when analysis fails due to timeout.
      */
-    public static function unsupportedFileType(string $filename, string $extension): self
+    public static function timeout(int $seconds): self
     {
-        return new self(
-            "Unsupported file type '{$extension}' for file '{$filename}'",
-            $filename,
-            '',
-            null,
-            ['extension' => $extension]
-        );
+        return new self("Analysis timed out after {$seconds} seconds");
     }
 
     /**
-     * Create exception for file size limits.
+     * Create an error for analyzer failures.
      */
-    public static function fileTooLarge(string $filename, int $size, int $maxSize): self
+    public static function analyzerFailed(string $analyzerName, string $reason, ?\Throwable $previous = null): self
     {
-        return new self(
-            "File '{$filename}' is too large ({$size} bytes). Maximum size is {$maxSize} bytes",
-            $filename,
-            '',
-            null,
-            ['size' => $size, 'max_size' => $maxSize]
-        );
-    }
-
-    /**
-     * Create exception for analyzer failures.
-     */
-    public static function analyzerFailed(
-        string $analyzerName,
-        string $filename,
-        ?\Throwable $previous = null,
-    ): self {
-        return new self(
-            "Analyzer '{$analyzerName}' failed to analyze file '{$filename}'",
-            $filename,
-            $analyzerName,
-            $previous
-        );
-    }
-
-    /**
-     * Create exception for invalid code input.
-     */
-    public static function invalidCode(string $reason, string $filename = ''): self
-    {
-        return new self(
-            "Invalid code input: {$reason}",
-            $filename,
-            '',
-            null,
-            ['reason' => $reason]
-        );
-    }
-
-    public function getFilename(): string
-    {
-        return $this->filename;
-    }
-
-    public function getAnalyzerName(): string
-    {
-        return $this->analyzerName;
+        return new self("Analyzer '{$analyzerName}' failed: {$reason}", $previous);
     }
 }
