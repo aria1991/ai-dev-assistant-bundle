@@ -479,7 +479,7 @@ final class CodeAnalyzer
         try {
             $prompt = "Analyze this code and provide improvement suggestions:\n\n{$code}\n\nIssues found:\n" . json_encode($issues);
             $response = $this->aiManager->request($prompt, ['type' => 'code_suggestions']);
-            
+
             return ['suggestions' => $response];
         } catch (\Exception $e) {
             // AI suggestions are optional, return empty array on failure
