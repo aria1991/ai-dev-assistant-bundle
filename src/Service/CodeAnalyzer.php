@@ -122,7 +122,6 @@ final class CodeAnalyzer
             ]);
 
             return $result;
-            
         } catch (AIProviderException $e) {
             $this->logger->error('AI Provider error during analysis', [
                 'file_path' => $filePath,
@@ -152,31 +151,30 @@ final class CodeAnalyzer
     /**
      * Analyze a specific file with error handling.
      *
-     * @param string $filePath Path to the file to analyze
+     * @param string $filePath     Path to the file to analyze
      * @param string $analysisType Type of analysis to perform
-     * @param array $options Additional options
-     * 
-     * @return array Analysis results
-     * 
-     * @throws FileException When file operations fail
+     * @param array  $options      Additional options
+     *
+     * @throws FileException     When file operations fail
      * @throws AnalysisException When analysis fails
+     *
+     * @return array Analysis results
      */
     public function analyzeFile(string $filePath, string $analysisType = 'comprehensive', array $options = []): array
     {
         try {
             $this->validateFile($filePath);
-            
+
             $code = file_get_contents($filePath);
             if ($code === false) {
                 throw FileException::fileNotReadable($filePath);
             }
-            
+
             return $this->analyze($code, $filePath, $analysisType, $options);
-            
         } catch (FileException $e) {
             $this->logger->error('File error during analysis', [
                 'file_path' => $filePath,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
             throw $e;
         }
@@ -186,12 +184,12 @@ final class CodeAnalyzer
      * Analyze multiple files in a directory.
      *
      * @param string $directoryPath Path to directory to analyze
-     * @param array $options Options including file filters
-     * 
-     * @return array Combined analysis results
-     * 
-     * @throws FileException When directory operations fail
+     * @param array  $options       Options including file filters
+     *
+     * @throws FileException     When directory operations fail
      * @throws AnalysisException When analysis fails
+     *
+     * @return array Combined analysis results
      */
     public function analyzeDirectory(string $directoryPath, array $options = []): array
     {
@@ -202,26 +200,26 @@ final class CodeAnalyzer
         $maxFiles = $options['max_files'] ?? 100;
         $excludePatterns = $options['exclude_patterns'] ?? ['vendor/', 'var/', 'node_modules/'];
         $recursive = $options['recursive'] ?? true;
-        
+
         try {
             $finder = new Finder();
             $finder->files()
                 ->name('*.php')
                 ->in($directoryPath);
-                
+
             if (!$recursive) {
                 $finder->depth('== 0');
             }
-            
+
             foreach ($excludePatterns as $pattern) {
                 $finder->notPath($pattern);
             }
-            
+
             if ($finder->count() > $maxFiles) {
                 $this->logger->warning('Directory contains too many files, limiting analysis', [
                     'directory' => $directoryPath,
                     'total_files' => $finder->count(),
-                    'max_files' => $maxFiles
+                    'max_files' => $maxFiles,
                 ]);
             }
 
@@ -231,7 +229,7 @@ final class CodeAnalyzer
                 'files_with_issues' => 0,
                 'total_issues' => 0,
                 'analysis_timestamp' => new \DateTimeImmutable(),
-                'results' => []
+                'results' => [],
             ];
 
             $filesProcessed = 0;
@@ -239,51 +237,45 @@ final class CodeAnalyzer
                 if ($filesProcessed >= $maxFiles) {
                     break;
                 }
-                
+
                 try {
                     $fileResult = $this->analyzeFile($file->getRealPath());
                     $results['results'][$file->getRelativePathname()] = $fileResult;
-                    $results['files_analyzed']++;
-                    
+                    ++$results['files_analyzed'];
+
                     if ($fileResult['summary']['total_issues'] > 0) {
-                        $results['files_with_issues']++;
+                        ++$results['files_with_issues'];
                         $results['total_issues'] += $fileResult['summary']['total_issues'];
                     }
-                    
                 } catch (\Exception $e) {
                     $this->logger->warning('Failed to analyze file in directory', [
                         'file' => $file->getRealPath(),
-                        'error' => $e->getMessage()
+                        'error' => $e->getMessage(),
                     ]);
-                    
+
                     $results['results'][$file->getRelativePathname()] = [
                         'error' => $e->getMessage(),
-                        'success' => false
+                        'success' => false,
                     ];
                 }
-                
-                $filesProcessed++;
+
+                ++$filesProcessed;
             }
 
             $this->logger->info('Directory analysis completed', [
                 'directory' => $directoryPath,
                 'files_analyzed' => $results['files_analyzed'],
-                'total_issues' => $results['total_issues']
+                'total_issues' => $results['total_issues'],
             ]);
 
             return $results;
-            
         } catch (\Throwable $e) {
             $this->logger->error('Directory analysis failed', [
                 'directory' => $directoryPath,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-            
-            throw new AnalysisException(
-                'Failed to analyze directory: ' . $e->getMessage(),
-                $e->getCode(),
-                $e
-            );
+
+            throw new AnalysisException('Failed to analyze directory: ' . $e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -297,7 +289,7 @@ final class CodeAnalyzer
         }
 
         // Basic PHP syntax check
-        if (strpos($code, '<?php') === false && strpos($code, '<?=') === false) {
+        if (!str_contains($code, '<?php') && !str_contains($code, '<?=')) {
             // For fragments, add PHP tags temporarily for validation
             $testCode = "<?php\n" . $code;
         } else {
@@ -307,11 +299,11 @@ final class CodeAnalyzer
         $output = [];
         $returnVar = 0;
         $tempFile = tempnam(sys_get_temp_dir(), 'php_syntax_check_');
-        
+
         try {
             file_put_contents($tempFile, $testCode);
             exec("php -l \"$tempFile\" 2>&1", $output, $returnVar);
-            
+
             if ($returnVar !== 0) {
                 $error = implode("\n", $output);
                 throw InvalidCodeException::invalidSyntax($error);
@@ -341,8 +333,8 @@ final class CodeAnalyzer
             throw FileException::fileTooBig($filePath, self::MAX_FILE_SIZE, $fileSize);
         }
 
-        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
-        if (!in_array(strtolower($extension), self::SUPPORTED_EXTENSIONS, true)) {
+        $extension = pathinfo($filePath, \PATHINFO_EXTENSION);
+        if (!\in_array(strtolower($extension), self::SUPPORTED_EXTENSIONS, true)) {
             throw InvalidCodeException::unsupportedFileType($filePath, self::SUPPORTED_EXTENSIONS);
         }
     }
@@ -363,30 +355,29 @@ final class CodeAnalyzer
                 'warning' => 0,
                 'info' => 0,
                 'quality_score' => 0.0,
-                'security_score' => 0.0
+                'security_score' => 0.0,
             ],
             'issues' => [],
             'metrics' => [
                 'lines_analyzed' => substr_count($code, "\n") + 1,
                 'complexity_score' => 0.0,
-                'maintainability_index' => 0
-            ]
+                'maintainability_index' => 0,
+            ],
         ];
 
         $analyzers = $this->getAnalyzersForType($analysisType, $options);
-        
+
         foreach ($analyzers as $analyzer) {
             try {
                 $analyzerResult = $analyzer->analyze($code, $filePath);
                 $this->mergeAnalysisResults($result, $analyzerResult);
-                
             } catch (\Exception $e) {
                 $this->logger->warning('Analyzer failed', [
-                    'analyzer' => get_class($analyzer),
+                    'analyzer' => $analyzer::class,
                     'error' => $e->getMessage(),
-                    'file_path' => $filePath
+                    'file_path' => $filePath,
                 ]);
-                
+
                 // Continue with other analyzers even if one fails
                 continue;
             }
@@ -418,6 +409,7 @@ final class CodeAnalyzer
                     $requestedAnalyzers[] = $allAnalyzers[$analyzerName];
                 }
             }
+
             return $requestedAnalyzers;
         }
 
@@ -429,15 +421,15 @@ final class CodeAnalyzer
      */
     private function mergeAnalysisResults(array &$result, array $analyzerResult): void
     {
-        if (isset($analyzerResult['issues']) && is_array($analyzerResult['issues'])) {
+        if (isset($analyzerResult['issues']) && \is_array($analyzerResult['issues'])) {
             $result['issues'] = array_merge($result['issues'], $analyzerResult['issues']);
-            $result['summary']['total_issues'] += count($analyzerResult['issues']);
-            
+            $result['summary']['total_issues'] += \count($analyzerResult['issues']);
+
             // Count issues by severity
             foreach ($analyzerResult['issues'] as $issue) {
                 $severity = $issue['severity'] ?? 'info';
                 if (isset($result['summary'][$severity])) {
-                    $result['summary'][$severity]++;
+                    ++$result['summary'][$severity];
                 }
             }
         }
@@ -465,9 +457,9 @@ final class CodeAnalyzer
             'code_hash' => md5($code),
             'file_path' => $filePath,
             'analysis_type' => $analysisType,
-            'options' => $options
+            'options' => $options,
         ];
-        
+
         return 'code_analysis_' . md5(serialize($data));
     }
 }

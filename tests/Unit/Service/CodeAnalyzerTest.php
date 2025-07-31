@@ -74,14 +74,14 @@ final class CodeAnalyzerTest extends TestCase
                 'warning' => 0,
                 'info' => 0,
                 'quality_score' => 9.5,
-                'security_score' => 10.0
+                'security_score' => 10.0,
             ],
             'issues' => [],
             'metrics' => [
                 'lines_analyzed' => 1,
                 'complexity_score' => 1.0,
-                'maintainability_index' => 95
-            ]
+                'maintainability_index' => 95,
+            ],
         ];
 
         $this->cacheService
@@ -116,7 +116,7 @@ final class CodeAnalyzerTest extends TestCase
     public function testAnalyzeWithInvalidCodeThrowsException(): void
     {
         $code = '<?php invalid syntax here';
-        
+
         $this->expectException(AnalysisException::class);
         $this->expectExceptionMessage('Invalid PHP syntax');
 
@@ -134,7 +134,7 @@ final class CodeAnalyzerTest extends TestCase
     public function testAnalyzeHandlesAIProviderException(): void
     {
         $code = '<?php echo "Hello World";';
-        
+
         $this->cacheService
             ->expects(self::once())
             ->method('get')
@@ -178,7 +178,7 @@ final class CodeAnalyzerTest extends TestCase
     public function testAnalyzeDirectoryWithValidPath(): void
     {
         $directory = __DIR__ . '/../../fixtures';
-        
+
         // Create fixtures directory if it doesn't exist
         if (!is_dir($directory)) {
             mkdir($directory, 0755, true);
