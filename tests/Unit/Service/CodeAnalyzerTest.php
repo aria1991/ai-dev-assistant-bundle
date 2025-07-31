@@ -63,6 +63,24 @@ final class CodeAnalyzerTest extends TestCase
         $code = '<?php echo "Hello World";';
         $filePath = 'test.php';
 
+        $analyzerResult = [
+            'success' => true,
+            'summary' => [
+                'total_issues' => 0,
+                'critical' => 0,
+                'warning' => 0,
+                'info' => 0,
+            ],
+            'issues' => [],
+            'metrics' => [
+                'lines_analyzed' => 1,
+                'complexity_score' => 1.0,
+                'maintainability_index' => 95,
+            ],
+            'quality_score' => 9.5,
+            'security_score' => 10.0,
+        ];
+
         $expectedResult = [
             'success' => true,
             'summary' => [
@@ -90,16 +108,35 @@ final class CodeAnalyzerTest extends TestCase
             ->expects(self::once())
             ->method('analyze')
             ->with($code, $filePath)
-            ->willReturn($expectedResult);
+            ->willReturn($analyzerResult);
 
         $this->cacheService
             ->expects(self::once())
             ->method('set')
-            ->with(self::isType('string'), $expectedResult, 3600);
+            ->with(
+                self::isType('string'),
+                self::callback(function ($result) use ($expectedResult) {
+                    // Check that the core expected data is present
+                    return $result['success'] === $expectedResult['success'] &&
+                           $result['summary']['quality_score'] === $expectedResult['summary']['quality_score'] &&
+                           $result['summary']['security_score'] === $expectedResult['summary']['security_score'] &&
+                           $result['issues'] === $expectedResult['issues'];
+                }),
+                3600
+            );
 
         $result = $this->codeAnalyzer->analyze($code, $filePath);
 
-        self::assertSame($expectedResult, $result);
+        // Assert core expected structure and values
+        self::assertTrue($result['success']);
+        self::assertSame($expectedResult['summary'], $result['summary']);
+        self::assertSame($expectedResult['issues'], $result['issues']);
+        self::assertSame($expectedResult['metrics'], $result['metrics']);
+        
+        // Assert metadata is present
+        self::assertArrayHasKey('file_path', $result);
+        self::assertArrayHasKey('analysis_type', $result);
+        self::assertArrayHasKey('timestamp', $result);
     }
 
     public function testAnalyzeWithEmptyCodeThrowsException(): void

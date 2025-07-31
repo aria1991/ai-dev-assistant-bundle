@@ -368,6 +368,9 @@ final class CodeAnalyzer
             try {
                 $analyzerResult = $analyzer->analyze($code, $filePath);
                 $this->mergeAnalysisResults($result, $analyzerResult);
+            } catch (AIProviderException $e) {
+                // Re-throw AI provider exceptions as they indicate infrastructure issues
+                throw $e;
             } catch (\Exception $e) {
                 $this->logger->warning('Analyzer failed', [
                     'analyzer' => $analyzer::class,
