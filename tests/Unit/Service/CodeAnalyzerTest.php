@@ -117,10 +117,10 @@ final class CodeAnalyzerTest extends TestCase
                 self::isType('string'),
                 self::callback(function ($result) use ($expectedResult) {
                     // Check that the core expected data is present
-                    return $result['success'] === $expectedResult['success'] &&
-                           $result['summary']['quality_score'] === $expectedResult['summary']['quality_score'] &&
-                           $result['summary']['security_score'] === $expectedResult['summary']['security_score'] &&
-                           $result['issues'] === $expectedResult['issues'];
+                    return $result['success'] === $expectedResult['success']
+                           && $result['summary']['quality_score'] === $expectedResult['summary']['quality_score']
+                           && $result['summary']['security_score'] === $expectedResult['summary']['security_score']
+                           && $result['issues'] === $expectedResult['issues'];
                 }),
                 3600
             );
@@ -132,7 +132,7 @@ final class CodeAnalyzerTest extends TestCase
         self::assertSame($expectedResult['summary'], $result['summary']);
         self::assertSame($expectedResult['issues'], $result['issues']);
         self::assertSame($expectedResult['metrics'], $result['metrics']);
-        
+
         // Assert metadata is present
         self::assertArrayHasKey('file_path', $result);
         self::assertArrayHasKey('analysis_type', $result);
