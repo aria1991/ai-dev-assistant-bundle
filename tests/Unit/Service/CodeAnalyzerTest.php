@@ -16,10 +16,7 @@ namespace Aria1991\AIDevAssistantBundle\Tests\Unit\Service;
 use Aria1991\AIDevAssistantBundle\Exception\AIProviderException;
 use Aria1991\AIDevAssistantBundle\Exception\AnalysisException;
 use Aria1991\AIDevAssistantBundle\Service\AIManagerInterface;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer;
+use Aria1991\AIDevAssistantBundle\Service\Analyzer\AnalyzerInterface;
 use Aria1991\AIDevAssistantBundle\Service\CacheServiceInterface;
 use Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -35,20 +32,20 @@ final class CodeAnalyzerTest extends TestCase
     private MockObject&AIManagerInterface $aiManager;
     private MockObject&CacheServiceInterface $cacheService;
     private MockObject&LoggerInterface $logger;
-    private MockObject&QualityAnalyzer $qualityAnalyzer;
-    private MockObject&SecurityAnalyzer $securityAnalyzer;
-    private MockObject&PerformanceAnalyzer $performanceAnalyzer;
-    private MockObject&DocumentationAnalyzer $documentationAnalyzer;
+    private MockObject&AnalyzerInterface $qualityAnalyzer;
+    private MockObject&AnalyzerInterface $securityAnalyzer;
+    private MockObject&AnalyzerInterface $performanceAnalyzer;
+    private MockObject&AnalyzerInterface $documentationAnalyzer;
 
     protected function setUp(): void
     {
         $this->aiManager = $this->createMock(AIManagerInterface::class);
         $this->cacheService = $this->createMock(CacheServiceInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->qualityAnalyzer = $this->createMock(QualityAnalyzer::class);
-        $this->securityAnalyzer = $this->createMock(SecurityAnalyzer::class);
-        $this->performanceAnalyzer = $this->createMock(PerformanceAnalyzer::class);
-        $this->documentationAnalyzer = $this->createMock(DocumentationAnalyzer::class);
+        $this->qualityAnalyzer = $this->createMock(AnalyzerInterface::class);
+        $this->securityAnalyzer = $this->createMock(AnalyzerInterface::class);
+        $this->performanceAnalyzer = $this->createMock(AnalyzerInterface::class);
+        $this->documentationAnalyzer = $this->createMock(AnalyzerInterface::class);
 
         $this->codeAnalyzer = new CodeAnalyzer(
             $this->aiManager,
@@ -143,7 +140,7 @@ final class CodeAnalyzerTest extends TestCase
         $this->qualityAnalyzer
             ->expects(self::once())
             ->method('analyze')
-            ->willThrowException(new AIProviderException('API rate limit exceeded'));
+            ->willThrowException(new AIProviderException('API rate limit exceeded', 'test-provider'));
 
         $this->logger
             ->expects(self::once())

@@ -33,3 +33,8 @@ Thumbs.db
 composer.phar
 php-cs-fixer.phar
 *.phar
+
+# Local testing files (temporary, use proper composer setup in CI/CD)
+phpunit-local.xml
+test-bootstrap.php
+tests/fixtures/

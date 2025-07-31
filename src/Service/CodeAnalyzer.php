@@ -17,10 +17,7 @@ use Aria1991\AIDevAssistantBundle\Exception\AIProviderException;
 use Aria1991\AIDevAssistantBundle\Exception\AnalysisException;
 use Aria1991\AIDevAssistantBundle\Exception\FileException;
 use Aria1991\AIDevAssistantBundle\Exception\InvalidCodeException;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer;
+use Aria1991\AIDevAssistantBundle\Service\Analyzer\AnalyzerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 
@@ -42,10 +39,10 @@ final class CodeAnalyzer
         private readonly AIManagerInterface $aiManager,
         private readonly CacheServiceInterface $cacheService,
         private readonly LoggerInterface $logger,
-        private readonly QualityAnalyzer $qualityAnalyzer,
-        private readonly SecurityAnalyzer $securityAnalyzer,
-        private readonly PerformanceAnalyzer $performanceAnalyzer,
-        private readonly DocumentationAnalyzer $documentationAnalyzer,
+        private readonly AnalyzerInterface $qualityAnalyzer,
+        private readonly AnalyzerInterface $securityAnalyzer,
+        private readonly AnalyzerInterface $performanceAnalyzer,
+        private readonly AnalyzerInterface $documentationAnalyzer,
     ) {
     }
 
