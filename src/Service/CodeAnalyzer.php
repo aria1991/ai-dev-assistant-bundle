@@ -37,7 +37,7 @@ final class CodeAnalyzer
     private const MAX_FILE_SIZE = 1024 * 1024; // 1MB
     private const SUPPORTED_EXTENSIONS = ['php'];
     private const DEFAULT_CACHE_TTL = 3600; // 1 hour
-    
+
     public function __construct(
         private readonly AIManager $aiManager,
         private readonly CacheService $cacheService,
@@ -52,109 +52,100 @@ final class CodeAnalyzer
     /**
      * Analyze code string with comprehensive error handling.
      *
-     * @param string $code The PHP code to analyze
-     * @param string $filePath Optional file path for context
+     * @param string $code         The PHP code to analyze
+     * @param string $filePath     Optional file path for context
      * @param string $analysisType Type of analysis: 'comprehensive', 'quality', 'security', 'performance', 'documentation'
-     * @param array $options Additional options for analysis
-     * 
-     * @return array Analysis results with success/error status
-     * 
-     * @throws AnalysisException When analysis fails
+     * @param array  $options      Additional options for analysis
+     *
+     * @throws AnalysisException    When analysis fails
      * @throws InvalidCodeException When code is invalid
+     *
+     * @return array Analysis results with success/error status
      */
     public function analyzeCode(
-        string $code, 
-        string $filePath = '', 
+        string $code,
+        string $filePath = '',
         string $analysisType = 'comprehensive',
-        array $options = []
+        array $options = [],
     ): array {
         return $this->analyze($code, $filePath, $analysisType, $options);
     }
 
     /**
      * Analyze code content.
-     * 
-     * @param string $code Code content to analyze
-     * @param string $filePath Optional file path for context
+     *
+     * @param string $code         Code content to analyze
+     * @param string $filePath     Optional file path for context
      * @param string $analysisType Type of analysis (comprehensive, quality, security, etc.)
-     * @param array $options Additional analysis options
-     * 
-     * @return array Analysis results with success/error status
-     * 
-     * @throws AnalysisException When analysis fails
+     * @param array  $options      Additional analysis options
+     *
+     * @throws AnalysisException    When analysis fails
      * @throws InvalidCodeException When code is invalid
+     *
+     * @return array Analysis results with success/error status
      */
     public function analyze(
-        string $code, 
-        string $filePath = '', 
+        string $code,
+        string $filePath = '',
         string $analysisType = 'comprehensive',
-        array $options = []
+        array $options = [],
     ): array {
         try {
             $this->validateCode($code);
-            
+
             $cacheKey = $this->generateCacheKey($code, $filePath, $analysisType, $options);
-            
+
             // Check cache first
             if ($cachedResult = $this->cacheService->get($cacheKey)) {
                 $this->logger->debug('Using cached analysis result', [
                     'file_path' => $filePath,
-                    'analysis_type' => $analysisType
+                    'analysis_type' => $analysisType,
                 ]);
+
                 return $cachedResult;
             }
 
             $this->logger->info('Starting code analysis', [
                 'file_path' => $filePath,
                 'analysis_type' => $analysisType,
-                'code_length' => strlen($code)
+                'code_length' => \strlen($code),
             ]);
 
             $result = $this->performAnalysis($code, $filePath, $analysisType, $options);
-            
+
             // Cache the result
             $this->cacheService->set($cacheKey, $result, self::DEFAULT_CACHE_TTL);
-            
+
             $this->logger->info('Analysis completed successfully', [
                 'file_path' => $filePath,
-                'total_issues' => $result['summary']['total_issues']
+                'total_issues' => $result['summary']['total_issues'],
             ]);
-            
+
             return $result;
             
         } catch (AIProviderException $e) {
             $this->logger->error('AI Provider error during analysis', [
                 'file_path' => $filePath,
                 'error' => $e->getMessage(),
-                'provider' => $e->getProvider() ?? 'unknown'
+                'provider' => $e->getProvider() ?? 'unknown',
             ]);
-            
-            throw new AnalysisException(
-                'Analysis failed due to AI provider error: ' . $e->getMessage(),
-                $e->getCode(),
-                $e
-            );
-            
+
+            throw new AnalysisException('Analysis failed due to AI provider error: ' . $e->getMessage(), $e->getCode(), $e);
         } catch (InvalidCodeException $e) {
             $this->logger->warning('Invalid code provided for analysis', [
                 'file_path' => $filePath,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-            
+
             throw $e;
-            
         } catch (\Throwable $e) {
             $this->logger->error('Unexpected error during analysis', [
                 'file_path' => $filePath,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            
-            throw new AnalysisException(
-                'Analysis failed due to unexpected error: ' . $e->getMessage(),
-                $e->getCode(),
-                $e
-            );
+
+            throw new AnalysisException('Analysis failed due to unexpected error: ' . $e->getMessage(), $e->getCode(), $e);
         }
     }
 

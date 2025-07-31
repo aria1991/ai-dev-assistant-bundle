@@ -13,17 +13,17 @@ declare(strict_types=1);
 
 namespace Aria1991\AIDevAssistantBundle\Tests\Unit\Service;
 
-use Aria1991\AIDevAssistantBundle\Exception\AnalysisException;
 use Aria1991\AIDevAssistantBundle\Exception\AIProviderException;
+use Aria1991\AIDevAssistantBundle\Exception\AnalysisException;
 use Aria1991\AIDevAssistantBundle\Service\AIManager;
+use Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer;
+use Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer;
 use Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer;
 use Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer;
 use Aria1991\AIDevAssistantBundle\Service\CacheService;
 use Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**
