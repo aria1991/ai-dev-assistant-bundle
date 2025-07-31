@@ -96,7 +96,8 @@ final class AnalyzeCodeCommand extends Command
                 $io->text("Analyzing: {$file}");
 
                 try {
-                    $result = $this->codeAnalyzer->analyzeFile($file, $enabledAnalyzers);
+                    $options = $enabledAnalyzers ? ['analyzers' => $enabledAnalyzers] : [];
+                    $result = $this->codeAnalyzer->analyzeFile($file, 'comprehensive', $options);
                     $results[] = $result;
 
                     $totalIssues += $result['summary']['total_issues'] ?? 0;

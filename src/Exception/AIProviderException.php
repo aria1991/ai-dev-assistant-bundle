@@ -128,6 +128,11 @@ final class AIProviderException extends AIDevAssistantException
         return $this->providerName;
     }
 
+    public function getProvider(): string
+    {
+        return $this->providerName;
+    }
+
     public function getStatusCode(): int
     {
         return $this->statusCode;

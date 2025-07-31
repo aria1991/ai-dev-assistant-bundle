@@ -462,4 +462,28 @@ final class CodeAnalyzer
 
         return 'code_analysis_' . md5(serialize($data));
     }
+
+    /**
+     * Get available analyzer names.
+     */
+    public function getAnalyzerNames(): array
+    {
+        return ['quality', 'security', 'performance', 'documentation'];
+    }
+
+    /**
+     * Get AI-powered suggestions for code improvements.
+     */
+    public function getAISuggestions(string $code, array $issues = []): array
+    {
+        try {
+            $prompt = "Analyze this code and provide improvement suggestions:\n\n{$code}\n\nIssues found:\n" . json_encode($issues);
+            $response = $this->aiManager->request($prompt, ['type' => 'code_suggestions']);
+            
+            return ['suggestions' => $response];
+        } catch (\Exception $e) {
+            // AI suggestions are optional, return empty array on failure
+            return [];
+        }
+    }
 }
