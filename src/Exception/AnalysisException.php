@@ -15,17 +15,17 @@ namespace Aria1991\AIDevAssistantBundle\Exception;
 
 /**
  * Base exception for all analysis-related errors.
- * 
+ *
  * This serves as the parent class for all exceptions thrown during
  * code analysis operations.
- * 
+ *
  * @author Aria Vahidi <aria.vahidi2020@gmail.com>
  */
 class AnalysisException extends \Exception
 {
     public function __construct(
         string $message,
-        ?\Throwable $previous = null
+        ?\Throwable $previous = null,
     ) {
         parent::__construct($message, 0, $previous);
     }

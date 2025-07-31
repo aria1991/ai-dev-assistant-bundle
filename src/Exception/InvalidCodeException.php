@@ -31,13 +31,13 @@ final class InvalidCodeException extends AnalysisException
         if ($error !== '') {
             $message .= ': ' . $error;
         }
-        
+
         return new self($message);
     }
 
     public static function unsupportedFileType(string $filePath, array $supportedTypes): self
     {
-        return new self(sprintf(
+        return new self(\sprintf(
             'Unsupported file type for %s. Supported types: %s',
             $filePath,
             implode(', ', $supportedTypes)

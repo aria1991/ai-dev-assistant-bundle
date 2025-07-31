@@ -22,22 +22,22 @@ final class FileException extends AnalysisException
 {
     public static function fileNotFound(string $filePath): self
     {
-        return new self(sprintf('File not found: %s', $filePath));
+        return new self(\sprintf('File not found: %s', $filePath));
     }
 
     public static function fileNotReadable(string $filePath): self
     {
-        return new self(sprintf('File is not readable: %s', $filePath));
+        return new self(\sprintf('File is not readable: %s', $filePath));
     }
 
     public static function directoryNotFound(string $directoryPath): self
     {
-        return new self(sprintf('Directory not found: %s', $directoryPath));
+        return new self(\sprintf('Directory not found: %s', $directoryPath));
     }
 
     public static function fileTooBig(string $filePath, int $maxSize, int $actualSize): self
     {
-        return new self(sprintf(
+        return new self(\sprintf(
             'File %s is too large (%d bytes). Maximum allowed size is %d bytes.',
             $filePath,
             $actualSize,

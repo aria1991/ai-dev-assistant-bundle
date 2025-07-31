@@ -13,20 +13,20 @@ declare(strict_types=1);
 
 namespace Aria1991\AIDevAssistantBundle\Service;
 
-use Aria1991\AIDevAssistantBundle\Exception\AnalysisException;
 use Aria1991\AIDevAssistantBundle\Exception\AIProviderException;
+use Aria1991\AIDevAssistantBundle\Exception\AnalysisException;
 use Aria1991\AIDevAssistantBundle\Exception\FileException;
 use Aria1991\AIDevAssistantBundle\Exception\InvalidCodeException;
+use Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer;
+use Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer;
 use Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer;
 use Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 
 /**
  * Main code analyzer service with robust error handling.
- * 
+ *
  * This service coordinates different analysis types and provides
  * comprehensive error handling for all failure scenarios.
  *
