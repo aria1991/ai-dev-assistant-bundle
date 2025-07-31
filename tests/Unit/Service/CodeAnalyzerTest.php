@@ -15,7 +15,7 @@ namespace Aria1991\AIDevAssistantBundle\Tests\Unit\Service;
 
 use Aria1991\AIDevAssistantBundle\Exception\AIProviderException;
 use Aria1991\AIDevAssistantBundle\Exception\AnalysisException;
-use Aria1991\AIDevAssistantBundle\Service\AIManager;
+use Aria1991\AIDevAssistantBundle\Service\AIManagerInterface;
 use Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer;
 use Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer;
 use Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer;
@@ -32,7 +32,7 @@ use Psr\Log\LoggerInterface;
 final class CodeAnalyzerTest extends TestCase
 {
     private CodeAnalyzer $codeAnalyzer;
-    private MockObject&AIManager $aiManager;
+    private MockObject&AIManagerInterface $aiManager;
     private MockObject&CacheService $cacheService;
     private MockObject&LoggerInterface $logger;
     private MockObject&QualityAnalyzer $qualityAnalyzer;
@@ -42,7 +42,7 @@ final class CodeAnalyzerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->aiManager = $this->createMock(AIManager::class);
+        $this->aiManager = $this->createMock(AIManagerInterface::class);
         $this->cacheService = $this->createMock(CacheService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->qualityAnalyzer = $this->createMock(QualityAnalyzer::class);

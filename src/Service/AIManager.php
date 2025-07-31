@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author Aria Vahidi <aria.vahidi2020@gmail.com>
  */
-final class AIManager
+final class AIManager implements AIManagerInterface
 {
     /**
      * @param AIProviderInterface[] $providers

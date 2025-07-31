@@ -39,7 +39,7 @@ final class CodeAnalyzer
     private const DEFAULT_CACHE_TTL = 3600; // 1 hour
 
     public function __construct(
-        private readonly AIManager $aiManager,
+        private readonly AIManagerInterface $aiManager,
         private readonly CacheService $cacheService,
         private readonly LoggerInterface $logger,
         private readonly QualityAnalyzer $qualityAnalyzer,
