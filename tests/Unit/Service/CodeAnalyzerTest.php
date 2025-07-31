@@ -20,7 +20,7 @@ use Aria1991\AIDevAssistantBundle\Service\Analyzer\DocumentationAnalyzer;
 use Aria1991\AIDevAssistantBundle\Service\Analyzer\PerformanceAnalyzer;
 use Aria1991\AIDevAssistantBundle\Service\Analyzer\QualityAnalyzer;
 use Aria1991\AIDevAssistantBundle\Service\Analyzer\SecurityAnalyzer;
-use Aria1991\AIDevAssistantBundle\Service\CacheService;
+use Aria1991\AIDevAssistantBundle\Service\CacheServiceInterface;
 use Aria1991\AIDevAssistantBundle\Service\CodeAnalyzer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -33,7 +33,7 @@ final class CodeAnalyzerTest extends TestCase
 {
     private CodeAnalyzer $codeAnalyzer;
     private MockObject&AIManagerInterface $aiManager;
-    private MockObject&CacheService $cacheService;
+    private MockObject&CacheServiceInterface $cacheService;
     private MockObject&LoggerInterface $logger;
     private MockObject&QualityAnalyzer $qualityAnalyzer;
     private MockObject&SecurityAnalyzer $securityAnalyzer;
@@ -43,7 +43,7 @@ final class CodeAnalyzerTest extends TestCase
     protected function setUp(): void
     {
         $this->aiManager = $this->createMock(AIManagerInterface::class);
-        $this->cacheService = $this->createMock(CacheService::class);
+        $this->cacheService = $this->createMock(CacheServiceInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->qualityAnalyzer = $this->createMock(QualityAnalyzer::class);
         $this->securityAnalyzer = $this->createMock(SecurityAnalyzer::class);

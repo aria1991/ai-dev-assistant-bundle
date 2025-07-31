@@ -40,7 +40,7 @@ final class CodeAnalyzer
 
     public function __construct(
         private readonly AIManagerInterface $aiManager,
-        private readonly CacheService $cacheService,
+        private readonly CacheServiceInterface $cacheService,
         private readonly LoggerInterface $logger,
         private readonly QualityAnalyzer $qualityAnalyzer,
         private readonly SecurityAnalyzer $securityAnalyzer,

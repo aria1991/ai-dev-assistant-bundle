@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author Aria Vahidi <aria.vahidi2020@gmail.com>
  */
-final class CacheService
+final class CacheService implements CacheServiceInterface
 {
     public function __construct(
         private readonly CacheItemPoolInterface $cache,
