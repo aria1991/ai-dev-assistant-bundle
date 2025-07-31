@@ -126,7 +126,7 @@ final class CodeAnalyzer
             $this->logger->error('AI Provider error during analysis', [
                 'file_path' => $filePath,
                 'error' => $e->getMessage(),
-                'provider' => $e->getProvider() ?? 'unknown',
+                'provider' => $e->getProvider(),
             ]);
 
             throw new AnalysisException('Analysis failed due to AI provider error: ' . $e->getMessage(), $e->getCode(), $e);

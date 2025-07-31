@@ -36,7 +36,7 @@ class AnalysisException extends \Exception
      */
     public static function generic(string $message, ?\Throwable $previous = null): self
     {
-        return new self($message, $previous);
+        return new self($message, 0, $previous);
     }
 
     /**
@@ -52,6 +52,6 @@ class AnalysisException extends \Exception
      */
     public static function analyzerFailed(string $analyzerName, string $reason, ?\Throwable $previous = null): self
     {
-        return new self("Analyzer '{$analyzerName}' failed: {$reason}", $previous);
+        return new self("Analyzer '{$analyzerName}' failed: {$reason}", 0, $previous);
     }
 }
