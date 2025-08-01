@@ -58,8 +58,13 @@ final class PostAnalysisEvent extends Event
         $this->results[$analyzer] = $result;
     }
 
-    public function getResult(string $analyzer): ?array
+    public function getResult(string $analyzer = ''): mixed
     {
+        if ($analyzer === '') {
+            // Return analysis result summary for backward compatibility
+            return $this->getAnalysisResult();
+        }
+        
         return $this->results[$analyzer] ?? null;
     }
 
@@ -91,5 +96,30 @@ final class PostAnalysisEvent extends Event
     public function setExecutionTime(float $time): void
     {
         $this->metadata['execution_time'] = $time;
+    }
+
+    /**
+     * Get analysis result summary for backward compatibility with EventSubscribers.
+     */
+    public function getAnalysisResult(): object
+    {
+        $errors = [];
+        $hasErrors = false;
+        
+        // Collect errors from all analyzer results
+        foreach ($this->results as $analyzerName => $result) {
+            if (isset($result['errors']) && !empty($result['errors'])) {
+                $errors[$analyzerName] = $result['errors'];
+                $hasErrors = true;
+            }
+        }
+
+        return (object) [
+            'filename' => $this->filename,
+            'successful' => !$hasErrors && !empty($this->results),
+            'executionTime' => $this->getExecutionTime() ?? 0.0,
+            'results' => $this->results,
+            'errors' => $errors,
+        ];
     }
 }

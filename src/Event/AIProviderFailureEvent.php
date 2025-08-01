@@ -31,6 +31,8 @@ final class AIProviderFailureEvent extends Event
         private readonly \Throwable $exception,
         private readonly array $options = [],
         private bool $shouldRetry = false,
+        private readonly int $retryCount = 0,
+        private readonly array $context = [],
     ) {
     }
 
@@ -62,6 +64,21 @@ final class AIProviderFailureEvent extends Event
     public function setShouldRetry(bool $retry): void
     {
         $this->shouldRetry = $retry;
+    }
+
+    public function isRetryable(): bool
+    {
+        return $this->shouldRetry;
+    }
+
+    public function getRetryCount(): int
+    {
+        return $this->retryCount;
+    }
+
+    public function getContext(): array
+    {
+        return $this->context;
     }
 
     public function isRateLimitError(): bool
