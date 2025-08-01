@@ -64,7 +64,7 @@ final class PostAnalysisEvent extends Event
             // Return analysis result summary for backward compatibility
             return $this->getAnalysisResult();
         }
-        
+
         return $this->results[$analyzer] ?? null;
     }
 
@@ -105,7 +105,7 @@ final class PostAnalysisEvent extends Event
     {
         $errors = [];
         $hasErrors = false;
-        
+
         // Collect errors from all analyzer results
         foreach ($this->results as $analyzerName => $result) {
             if (isset($result['errors']) && !empty($result['errors'])) {
