@@ -38,7 +38,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
         restore-keys: |
           ${{ runner.os }}-composer-
           
@@ -162,7 +162,7 @@ jobs:
     - name: Install Symfony ${{ matrix.symfony-version }}
       run: |
         composer require symfony/framework-bundle:${{ matrix.symfony-version }} --no-update --no-scripts
-        composer install --prefer-dist --no-progress --no-interaction
+        composer update --prefer-dist --no-progress --no-interaction --optimize-autoloader
         
     - name: Bundle Integration Test
       run: |

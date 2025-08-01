@@ -2,6 +2,9 @@
 /vendor/
 /node_modules/
 
+# Composer lock file (excluded for libraries to allow flexible dependency resolution)
+composer.lock
+
 # IDEs
 /.idea/
 /.vscode/
