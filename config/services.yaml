@@ -120,3 +120,16 @@ services:
     #         $aiManager: '@Aria1991\AIDevAssistantBundle\Service\AIManager'
     #     tags:
     #         - { name: 'data_collector', template: 'profiler/ai_analysis.html.twig', id: 'ai_analysis', priority: 300 }
+
+    # Event Subscribers for analysis monitoring and logging
+    Aria1991\AIDevAssistantBundle\EventSubscriber\AnalysisLoggingSubscriber:
+        tags:
+            - { name: 'kernel.event_subscriber' }
+
+    Aria1991\AIDevAssistantBundle\EventSubscriber\AIProviderFailureSubscriber:
+        tags:
+            - { name: 'kernel.event_subscriber' }
+
+    Aria1991\AIDevAssistantBundle\EventSubscriber\PerformanceMonitoringSubscriber:
+        tags:
+            - { name: 'kernel.event_subscriber' }

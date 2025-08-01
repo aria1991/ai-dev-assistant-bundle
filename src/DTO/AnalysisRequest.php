@@ -137,6 +137,141 @@ final readonly class AnalysisRequest
     }
 
     /**
+     * Create from array data with strict type validation.
+     *
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            code: self::validateString($data, 'code', ''),
+            filename: self::validateString($data, 'filename', ''),
+            enabledAnalyzers: self::validateStringArray($data, 'enabled_analyzers', []),
+            options: self::validateArray($data, 'options', []),
+            maxTokens: self::validateInt($data, 'max_tokens', 4000),
+            useCache: self::validateBool($data, 'use_cache', true),
+            timeout: self::validateInt($data, 'timeout', 30),
+        );
+    }
+
+    /**
+     * Create from JSON string with validation.
+     */
+    public static function fromJson(string $json): self
+    {
+        try {
+            $data = json_decode($json, true, 512, \JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \InvalidArgumentException('Invalid JSON provided: ' . $e->getMessage(), 0, $e);
+        }
+
+        if (!\is_array($data)) {
+            throw new \InvalidArgumentException('JSON must decode to an array');
+        }
+
+        return self::fromArray($data);
+    }
+
+    /**
+     * Convert to array for serialization.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'code' => $this->code,
+            'filename' => $this->filename,
+            'enabled_analyzers' => $this->enabledAnalyzers,
+            'options' => $this->options,
+            'max_tokens' => $this->maxTokens,
+            'use_cache' => $this->useCache,
+            'timeout' => $this->timeout,
+        ];
+    }
+
+    /**
+     * Convert to JSON string.
+     */
+    public function toJson(): string
+    {
+        try {
+            return json_encode($this->toArray(), \JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException('Failed to encode to JSON: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    private static function validateString(array $data, string $key, string $default): string
+    {
+        $value = $data[$key] ?? $default;
+
+        if (!\is_string($value)) {
+            throw new \InvalidArgumentException("Field '{$key}' must be a string");
+        }
+
+        return $value;
+    }
+
+    private static function validateStringArray(array $data, string $key, array $default): array
+    {
+        $value = $data[$key] ?? $default;
+
+        if (!\is_array($value)) {
+            throw new \InvalidArgumentException("Field '{$key}' must be an array");
+        }
+
+        foreach ($value as $item) {
+            if (!\is_string($item)) {
+                throw new \InvalidArgumentException("All items in '{$key}' must be strings");
+            }
+        }
+
+        return $value;
+    }
+
+    private static function validateArray(array $data, string $key, array $default): array
+    {
+        $value = $data[$key] ?? $default;
+
+        if (!\is_array($value)) {
+            throw new \InvalidArgumentException("Field '{$key}' must be an array");
+        }
+
+        return $value;
+    }
+
+    private static function validateInt(array $data, string $key, int $default): int
+    {
+        $value = $data[$key] ?? $default;
+
+        if (!\is_int($value) && !is_numeric($value)) {
+            throw new \InvalidArgumentException("Field '{$key}' must be an integer");
+        }
+
+        return (int) $value;
+    }
+
+    private static function validateBool(array $data, string $key, bool $default): bool
+    {
+        $value = $data[$key] ?? $default;
+
+        if (!\is_bool($value)) {
+            // Allow common truthy/falsy values
+            if (\is_string($value)) {
+                return \in_array(strtolower($value), ['true', '1', 'yes', 'on'], true);
+            }
+            if (is_numeric($value)) {
+                return (bool) $value;
+            }
+
+            throw new \InvalidArgumentException("Field '{$key}' must be a boolean");
+        }
+
+        return $value;
+    }
+
+    /**
      * Validate the request parameters.
      *
      * @throws \InvalidArgumentException If validation fails
